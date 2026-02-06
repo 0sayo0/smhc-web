@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
-  // Declaramos turbopack explícitamente para evitar conflicto
-  turbopack: {},
 };
 
 export default nextConfig;
