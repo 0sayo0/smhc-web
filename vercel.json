@@ -1,0 +1,3 @@
+{
+  "ignoreCommand": "echo \"Ignoring Sanity Studio during Next.js build\""
+}
