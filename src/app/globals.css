@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* =========================
+   TOKENS BASE
+   ========================= */
+:root {
+  --background: #f9f7f2;
+  --foreground: #383838;
+}
+
+/* =========================
+   TEMA TAILWIND (v4)
+   ========================= */
+@theme inline {
+  /* Colores SMHC */
+  --color-cream: #f9f7f2;
+  --color-pink: #e5b6bd;
+  --color-coal: #383838;
+  --color-terracotta: #bc5d58;
+  --color-gold: #c5a065;
+
+  /* Tipografías */
+  --font-brand: var(--font-tenor);
+  --font-editorial: var(--font-lora);
+  --font-system: var(--font-montserrat);
+}
+
+/* =========================
+   BASE
+   ========================= */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-system), Arial, Helvetica, sans-serif;
+}
