@@ -5,10 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'cdn.sanity.io',
+        protocol: "https",
+        hostname: "cdn.sanity.io",
       },
     ],
+  },
+  webpack(config) {
+    config.externals = config.externals || [];
+    config.externals.push("@sanity/vision");
+    return config;
   },
 };
 
