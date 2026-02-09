@@ -22,7 +22,7 @@ async function getProducts() {
     mainImage,
     slug
   }`;
-  return client.fetch(query);
+  return client.fetch(query, {}, { next: { revalidate: 60 } });
 }
 
 export default async function Home() {

@@ -36,7 +36,7 @@ async function getProduct(slug: string) {
     whatsappMessage,
     inStock
   }`;
-  return client.fetch(query);
+  return client.fetch(query, {}, { next: { revalidate: 60 } });
 }
 
 export async function generateStaticParams() {
