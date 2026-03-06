@@ -33,3 +33,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-system), Arial, Helvetica, sans-serif;
 }
+
+.filter-hero {
+  filter: brightness(40%);
+}

@@ -68,7 +68,7 @@ export default async function ProductPage({
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
   return (
-    <main className="min-h-screen bg-cream py-12 md:py-20">
+    <main className="min-h-screen bg-cream py-12 md:py-20 mt-20 mb-10 md:mt-10">
       <Container>
         <FadeIn>
           <Link

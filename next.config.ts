@@ -5,7 +5,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.sanity.io",
+        hostname: "cdn.sanity.io", // El pase de tus productos
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com", // ¡El nuevo pase VIP para Pexels!
       },
     ],
   },

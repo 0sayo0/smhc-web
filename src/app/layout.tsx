@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Tenor_Sans, Lora, Montserrat } from "next/font/google";
 import "./globals.css";
-// import { Navbar } from "@/components/layout/Navbar";
-// import { Footer } from "@/components/layout/Footer";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Ajusta la ruta si es necesario
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 const tenor = Tenor_Sans({
   subsets: ["latin"],
@@ -38,10 +39,12 @@ export default function RootLayout({
       lang="es"
       className={`${tenor.variable} ${lora.variable} ${montserrat.variable}`}
     >
-      <body>
-        {/* <Navbar /> */}
+      <body className="relative">
+        {" "}
+        <Navbar />
         {children}
-        {/* <Footer /> */}
+        <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );
