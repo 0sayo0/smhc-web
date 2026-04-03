@@ -50,6 +50,13 @@ export const product = defineType({
     }),
 
     // --- Storytelling ---
+    // THIS IS NEW: To differentiate decorative from aromatic herbs without dirtying the card
+    defineField({
+      name: 'purpose',
+      title: 'Propósito (Uso)',
+      type: 'string',
+      description: 'Ej: Pieza escultural. Diseñada para perfumar en frío y decorar.',
+    }),
     defineField({
       name: 'description',
       title: 'Descripción Corta (Para cards)',

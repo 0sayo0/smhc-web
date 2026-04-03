@@ -25,5 +25,13 @@ export const collection = defineType({
       type: 'text',
       rows: 3,
     }),
+    // We link the collection to a category (Ex., Eternal Garden -> Wax)
+    defineField({
+      name: 'category',
+      title: 'Categoría Padre',
+      type: 'reference',
+      to: [{type: 'category'}],
+      validation: (Rule) => Rule.required(),
+    }),
   ],
 })

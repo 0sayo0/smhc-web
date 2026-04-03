@@ -3,7 +3,6 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import Link from "next/link";
 
 export default function ContactoPage() {
-  // 👇 Sustituye estos datos por los reales
   const phoneNumber = "5214612771367";
   const defaultMessage =
     "Hola,%20me%20gustaría%20saber%20más%20sobre%20las%20piezas%20de%20Stephany%20Manzano%20Home%20Collection.";

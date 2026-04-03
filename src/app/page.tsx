@@ -1,154 +1,247 @@
 import { client, urlFor } from "@/lib/sanity";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
+import { Carousel } from "@/components/ui/Carousel";
 import Image from "next/image";
 import Link from "next/link";
 
+// 1. Nuevas interfaces para soportar la estructura del Curador
 interface Product {
   _id: string;
   name: string;
   description: string;
+  purpose?: string;
   mainImage: any;
   slug: { current: string };
 }
 
-async function getProducts() {
-  const query = `*[_type == "product"] | order(_createdAt desc) {
-    _id,
-    name,
-    description,
-    mainImage,
-    slug
+interface CarouselSection {
+  categoryName: string;
+  categorySlug: string;
+  selectedProducts: Product[];
+}
+
+// 2. Consulta GROQ Avanzada: Trae las vitrinas, expande el nombre de la categoría y los productos seleccionados
+async function getHomeData() {
+  const query = `*[_type == "homeCurator"][0] {
+    carousels[] {
+      "categoryName": category->name,
+      "categorySlug": category->slug.current,
+      selectedProducts[]-> {
+        _id,
+        name,
+        description,
+        purpose, 
+        mainImage,
+        slug
+      }
+    }
   }`;
   return client.fetch(query, {}, { next: { revalidate: 60 } });
 }
 
 export default async function Home() {
-  const products: Product[] = await getProducts();
+  // 3. Ejecutamos la consulta
+  const homeData = await getHomeData();
+  const carousels: CarouselSection[] = homeData?.carousels || [];
 
   return (
-    <main className="min-h-screen bg-cream selection:bg-terracotta selection:text-white">
-      {/* 1. HERO SECTION INMERSIVO (Portada de Revista) */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* Imagen de fondo de Pexels */}
-        <Image
-          src="/hero-smhc.webp"
-          alt="Elegancia y luz"
-          fill
-          priority
-          className="object-cover scale-100 animate-slow-pan filter-hero"
-        />
-        {/* Overlay oscuro/gradiente para que el texto resalte */}
-        <div className="absolute inset-0 bg-coal/30 bg-gradient-to-t from-coal/60 via-transparent to-transparent"></div>
+    <main className="min-h-screen bg-cream selection:bg-terracotta selection:text-white pb-32">
+      {/* 1. HERO ENMARCADO Y PROPORCIONADO */}
+      <section className="pt-40 md:pt-48 pb-16 px-6 md:px-12 flex justify-center items-center w-full">
+        <div className="relative w-full max-w-6xl aspect-[4/5] md:aspect-[21/12] overflow-hidden bg-coal/5 shadow-sm group">
+          <Image
+            src="/hero-smhc.webp"
+            alt="Stephany Manzano Home Collection"
+            fill
+            priority
+            className="object-cover scale-100 group-hover:scale-105 transition-transform duration-[20s] ease-out filter-hero"
+          />
 
-        {/* Contenido Central */}
-        <div className="relative z-10 text-center text-cream px-4 -mt-1 md:-mt-14">
-          <FadeIn>
-            {/* LOGO DE REGRESO */}
-            {/* Truco: Si tu logo original es negro, sobre esta foto oscura no se va a ver. 
-                Le agregué "brightness-0 invert" para que Tailwind lo pinte de blanco automáticamente. 
-                Si tu logo ya tiene letras blancas, quítale esas dos clases. */}
-            <img
-              src="/smhc_logo_nobg.png"
-              alt="Stephany Manzano Logo"
-              className="w-20 md:w-28 mx-auto mb-6 opacity-90 brightness-0 invert"
-            />
+          <div className="absolute inset-0 bg-coal/20 bg-gradient-to-t from-coal/60 via-coal/10 to-transparent"></div>
 
-            <h1 className="font-brand text-5xl md:text-7xl lg:text-8xl tracking-widest drop-shadow-md mb-4">
-              Stephany Manzano
-            </h1>
-            <p className="font-editorial text-xl md:text-3xl italic tracking-wide text-cream/90">
-              Home Collection
-            </p>
-          </FadeIn>
-        </div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+            <FadeIn>
+              <span className="text-cream/90 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.4em] mb-4 block drop-shadow-md">
+                Nueva Colección
+              </span>
+              <h2 className="font-brand text-4xl md:text-5xl lg:text-6xl text-cream mb-8 tracking-wide drop-shadow-lg max-w-3xl">
+                La luz transformada en arte.
+              </h2>
 
-        {/* Indicador de scroll */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-          <span className="text-cream/70 text-xs font-system uppercase tracking-widest">
-            Descubrir
-          </span>
+              {/* El botón ahora apunta dinámicamente a la primera vitrina */}
+              <a
+                href="#vitrina-0"
+                className="inline-block bg-cream text-coal px-8 py-3.5 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.2em] hover:bg-coal hover:text-cream transition-colors duration-500 shadow-xl"
+              >
+                Descubrir Piezas
+              </a>
+            </FadeIn>
+          </div>
         </div>
       </section>
 
-      {/* 2. EL MANIFIESTO (Respiro visual y Storytelling) */}
-      <section className="py-32 bg-cream text-center px-4">
+      {/* 2. EL MANIFIESTO */}
+      <section className="py-20 text-center px-4">
         <Container>
           <FadeIn>
-            <span className="text-terracotta text-xs font-system font-bold uppercase tracking-[0.3em] mb-6 block">
-              La Filosofía
-            </span>
-            <h2 className="font-brand text-3xl md:text-5xl text-coal mb-8 leading-tight max-w-3xl mx-auto">
+            <h2 className="font-brand text-2xl md:text-4xl text-coal mb-6 leading-tight max-w-3xl mx-auto tracking-wide">
               El arte de la luz y la naturaleza encapsulada.
             </h2>
-            <p className="font-editorial text-lg md:text-xl text-coal/70 max-w-2xl mx-auto leading-relaxed">
+            <p className="font-editorial text-base md:text-lg text-coal/60 max-w-2xl mx-auto leading-relaxed italic">
               Cada pieza es creada con intención y delicadeza. Desde la calidez
               de nuestras velas de cera de soya artesanal, hasta la eternidad
-              encapsulada en cada Gran Jardín Eterno. Una oda a la elegancia
-              atemporal para tu hogar.
+              encapsulada en cada Gran Jardín Eterno.
             </p>
           </FadeIn>
         </Container>
       </section>
 
-      {/* 3. LA GALERÍA DE PIEZAS (Grid refinado con tus cards originales) */}
-      <section className="pb-32 bg-cream">
-        <Container>
-          <FadeIn>
-            <div className="flex justify-between items-end mb-16 border-b border-coal/10 pb-6">
-              <h2 className="font-brand text-4xl text-coal">Colección</h2>
-              <Link
-                href="/"
-                className="hidden md:inline-block font-system text-xs font-medium uppercase tracking-widest text-terracotta hover:text-coal transition-colors"
+      {/* 3. VITRINAS DINÁMICAS (Iteramos sobre los datos de Sanity) */}
+      {carousels.map((carousel, index) => (
+        <section
+          key={index}
+          id={`vitrina-${index}`}
+          className="py-16 scroll-mt-24"
+        >
+          <Container>
+            <FadeIn>
+              <div className="flex flex-col items-center mb-16">
+                <h3 className="font-brand text-2xl md:text-3xl tracking-[0.15em] text-coal uppercase">
+                  {carousel.categoryName}
+                </h3>
+                <div className="w-12 h-[1px] bg-coal/20 mt-6"></div>
+              </div>
+            </FadeIn>
+          </Container>
+
+          <Carousel>
+            {carousel.selectedProducts.map((product) => (
+              <div
+                key={product._id}
+                className="min-w-[65vw] md:min-w-[28vw] lg:min-w-[18vw] snap-center group/card"
               >
-                Ver todo
+                <Link
+                  href={`/product/${product.slug.current}`}
+                  className="flex flex-col items-center text-center cursor-pointer"
+                >
+                  <div className="relative w-full aspect-[3/4] overflow-hidden bg-transparent mb-8">
+                    {product.mainImage && (
+                      <Image
+                        src={urlFor(product.mainImage)
+                          .width(800)
+                          .height(1066)
+                          .url()}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
+                        className="object-cover transition-transform duration-1000 group-hover/card:scale-105"
+                      />
+                    )}
+                  </div>
+
+                  <h4 className="text-xl font-brand text-coal mb-2">
+                    {product.name}
+                  </h4>
+                  <p className="text-sm font-editorial italic text-coal/70 mb-4 line-clamp-1 px-4">
+                    {product.purpose || product.description}
+                  </p>
+
+                  <span className="text-[10px] text-coal/90 font-semibold uppercase tracking-widest border-b border-transparent group-hover/card:text-terracotta group-hover/card:border-terracotta transition-colors duration-300 pb-0.5">
+                    Ver pieza
+                  </span>
+                </Link>
+              </div>
+            ))}
+
+            {/* Tarjeta de "Ver Toda la Colección" dinámica */}
+            <div className="min-w-[65vw] md:min-w-[28vw] lg:min-w-[18vw] snap-center flex items-center justify-center border border-coal/10 hover:bg-coal group/link transition-colors duration-500 cursor-pointer">
+              <Link
+                href={`/coleccion/${carousel.categorySlug}`}
+                className="w-full h-full flex flex-col items-center justify-center py-28"
+              >
+                <div className="w-8 h-[1px] bg-coal group-hover/link:bg-cream mb-4 transition-colors"></div>
+                <span className="text-[10px] md:text-xs font-system uppercase tracking-widest font-semibold text-coal group-hover/link:text-cream transition-colors px-4 text-center">
+                  Descubrir más
+                </span>
               </Link>
             </div>
-          </FadeIn>
+          </Carousel>
+        </section>
+      ))}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {products.map((product) => (
-              <FadeIn key={product._id}>
-                <Link href={`/product/${product.slug.current}`}>
-                  <div className="group cursor-pointer">
-                    {/* Imagen (Regresamos al aspect-4/5 y quitamos sombras pesadas) */}
-                    <div className="relative aspect-[4/5] overflow-hidden bg-white/50 mb-6">
-                      {product.mainImage && (
-                        <Image
-                          src={urlFor(product.mainImage)
-                            .width(800)
-                            .height(1000)
-                            .url()}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
+      {/* 4. BODEGÓN HÍBRIDO: CERA AROMÁTICA */}
+      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
+        <FadeIn>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 md:px-0 order-2 md:order-1">
+              <span className="text-terracotta text-xs font-system font-bold uppercase tracking-[0.3em] mb-4 block">
+                Próximamente
+              </span>
+              <h3 className="font-brand text-4xl md:text-5xl text-coal mb-6">
+                Cera Aromática
+              </h3>
+              <p className="font-editorial text-lg text-coal/60 italic mb-10 max-w-md leading-relaxed">
+                Luz y esencia en perfecta armonía. Una colección diseñada para
+                encenderse, iluminar tus momentos y liberar notas olfativas
+                intensas que transforman la atmósfera de tu hogar.
+              </p>
 
-                    {/* Textos y Botón (Alineados a la izquierda como los tenías) */}
-                    <div className="text-left">
-                      <h3 className="text-2xl font-brand text-coal mb-1">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm font-editorial text-coal/70 line-clamp-2">
-                        {product.description}
-                      </p>
+              <Link
+                href="/contacto"
+                className="text-[10px] font-system uppercase tracking-widest border-b border-coal pb-1 hover:text-terracotta hover:border-terracotta transition-colors"
+              >
+                Recibir notificación
+              </Link>
+            </div>
 
-                      {/* Botón visual "VER PIEZA" */}
-                      <div className="mt-4">
-                        <span className="text-terracotta text-xs font-bold tracking-widest uppercase border-b border-terracotta pb-0.5 group-hover:text-coal group-hover:border-coal transition-colors">
-                          Ver pieza
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </FadeIn>
-            ))}
+            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5 order-1 md:order-2">
+              <Image
+                src="https://images.pexels.com/photos/7004676/pexels-photo-7004676.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                alt="Colección Cera Aromática"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
-        </Container>
+        </FadeIn>
+      </section>
+
+      {/* 5. BODEGÓN HÍBRIDO: PIEDRA ESCULTURAL */}
+      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
+        <FadeIn>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
+            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5">
+              <Image
+                src="https://images.pexels.com/photos/4207788/pexels-photo-4207788.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                alt="Ambiente Stephany Manzano"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 md:px-0">
+              <span className="text-terracotta text-xs font-system font-bold uppercase tracking-[0.3em] mb-4 block">
+                Próximamente
+              </span>
+              <h3 className="font-brand text-4xl md:text-5xl text-coal mb-6">
+                Piedra Escultural
+              </h3>
+              <p className="font-editorial text-lg text-coal/60 italic mb-10 max-w-md leading-relaxed">
+                La solidez de los minerales transformada en siluetas suaves y
+                atemporales. Macetas esculturales creadas para albergar vida con
+                la más pura elegancia.
+              </p>
+
+              <Link
+                href="/contacto"
+                className="text-[10px] font-system uppercase tracking-widest border-b border-coal pb-1 hover:text-terracotta hover:border-terracotta transition-colors"
+              >
+                Recibir notificación
+              </Link>
+            </div>
+          </div>
+        </FadeIn>
       </section>
     </main>
   );

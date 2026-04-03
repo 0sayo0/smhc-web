@@ -1,7 +1,7 @@
 import { client } from "@/lib/sanity";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
-import { ProductGallery } from "@/components/product/ProductGallery"; // <--- IMPORTAMOS LA NUEVA GALERÍA
+import { ProductGallery } from "@/components/product/ProductGallery";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -16,12 +16,14 @@ interface ProductDetail {
   collection: { name: string };
   dimensions: string;
   material: string[];
+  purpose?: string; // <-- AGREGADO: El nuevo campo
   story: any;
   whatsappMessage: string;
   inStock: boolean;
 }
 
 async function getProduct(slug: string) {
+  // AGREGADO: Pedimos 'purpose' a Sanity
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
     name,
@@ -32,6 +34,7 @@ async function getProduct(slug: string) {
     collection->{name},
     dimensions,
     material,
+    purpose, 
     story,
     whatsappMessage,
     inStock
@@ -68,7 +71,8 @@ export default async function ProductPage({
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
   return (
-    <main className="min-h-screen bg-cream py-12 md:py-20 mt-20 mb-10 md:mt-10">
+    // AGREGADO: Protección de Navbar (pt-32 lg:pt-40) y quitamos márgenes top innecesarios
+    <main className="min-h-screen bg-cream pt-32 lg:pt-56 pb-20">
       <Container>
         <FadeIn>
           <Link
@@ -76,12 +80,12 @@ export default async function ProductPage({
             className="inline-flex items-center text-sm font-system text-coal/60 hover:text-terracotta transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al catálogo
+            Regresar a la Boutique
           </Link>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          {/* COLUMNA IZQUIERDA: Aquí usamos la nueva Galería Interactiva */}
+          {/* COLUMNA IZQUIERDA: Galería Interactiva */}
           <div>
             <ProductGallery
               mainImage={product.mainImage}
@@ -89,26 +93,35 @@ export default async function ProductPage({
             />
           </div>
 
-          {/* COLUMNA DERECHA: Info (Igual que antes) */}
+          {/* COLUMNA DERECHA: Info */}
           <div className="flex flex-col justify-center">
             <FadeIn>
               <div className="text-xs font-bold tracking-widest text-terracotta uppercase mb-4">
                 {product.category?.name} — {product.collection?.name}
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-brand text-coal mb-6">
+              <h1 className="text-4xl md:text-5xl font-brand text-coal mb-4">
                 {product.name}
               </h1>
 
-              <div className="flex flex-wrap gap-y-2 gap-x-6 text-sm font-system text-coal/70 mb-8 border-y border-coal/10 py-4">
+              {/* AGREGADO: El Propósito renderizado como subtítulo editorial */}
+              {product.purpose && (
+                <p className="font-editorial text-lg text-coal/60 italic mb-6">
+                  {product.purpose}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-y-2 gap-x-6 text-sm font-system text-coal/70 mb-8 border-y border-coal/10 py-6 mt-2">
                 {product.dimensions && (
                   <span>
-                    <strong>Medidas:</strong> {product.dimensions}
+                    <strong className="tracking-wide">Medidas:</strong>{" "}
+                    {product.dimensions}
                   </span>
                 )}
                 {product.material && (
                   <span>
-                    <strong>Material:</strong> {product.material.join(", ")}
+                    <strong className="tracking-wide">Material:</strong>{" "}
+                    {product.material.join(", ")}
                   </span>
                 )}
               </div>
@@ -123,6 +136,7 @@ export default async function ProductPage({
                 )}
               </div>
 
+              {/* TU BOTÓN ORIGINAL INTACTO */}
               <a
                 href={whatsappUrl}
                 target="_blank"
