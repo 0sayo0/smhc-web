@@ -12,10 +12,10 @@ export default function NosotrosPage() {
           <h1 className="font-brand text-4xl md:text-6xl text-coal mb-6">
             Stephany Manzano
           </h1>
-          <div className="w-16 h-[1px] bg-coal/20 mx-auto mb-8"></div>
+          <div className="w-16 h-px bg-coal/20 mx-auto mb-8"></div>
           <p className="font-editorial text-xl md:text-2xl text-coal/70 italic max-w-2xl mx-auto leading-relaxed">
-            "Esta página está siendo moldeada con la misma delicadeza y atención
-            al detalle que nuestras piezas. Próximamente..."
+            &ldquo;Esta página está siendo moldeada con la misma delicadeza y
+            atención al detalle que nuestras piezas. Próximamente...&rdquo;
           </p>
         </FadeIn>
       </Container>

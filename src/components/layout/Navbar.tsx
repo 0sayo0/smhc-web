@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 
+import Image from "next/image";
+
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCollectionOpen, setIsMobileCollectionOpen] = useState(false);
@@ -58,11 +60,15 @@ export function Navbar() {
             }`}
           >
             <Link href="/" className="flex flex-col items-center group">
-              <img
-                src="/smhc_logo_nobg.png"
-                alt="Logo"
-                className="w-10 opacity-90 brightness-0"
-              />
+              <div className="relative h-12 w-10">
+                <Image
+                  src="/smhc_logo_nobg.png"
+                  alt="Stephany Manzano Home Collection"
+                  fill
+                  sizes="40px"
+                  className="object-contain opacity-90 brightness-0"
+                />
+              </div>
               <span className="text-lg lg:text-xl font-brand text-coal tracking-[0.15em] group-hover:opacity-70 transition-opacity">
                 STEPHANY MANZANO
               </span>
@@ -89,7 +95,7 @@ export function Navbar() {
               </span>
 
               {/* EL PANEL DESPLEGABLE */}
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 w-[220px]">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 w-55">
                 <div className="bg-cream border border-coal/10 shadow-xl py-5 flex flex-col items-center gap-4 text-center">
                   <Link
                     href="/coleccion/cera"
@@ -103,7 +109,7 @@ export function Navbar() {
                   >
                     Piedra Escultural
                   </Link>
-                  <div className="w-8 h-[1px] bg-coal/10 mt-1"></div>
+                  <div className="w-8 h-px bg-coal/10 mt-1"></div>
                   <Link
                     href="/"
                     className="text-[9px] tracking-[0.2em] text-coal/50 hover:text-coal transition-colors w-full block px-4"
@@ -162,7 +168,7 @@ export function Navbar() {
           {/* Logo SIEMPRE visible en Móvil y Tablet */}
           <div className="flex flex-col items-center mt-1">
             <Link href="/" className="flex flex-col items-center">
-              <span className="text-lg font-brand text-coal tracking-[0.1em] leading-none">
+              <span className="text-lg font-brand text-coal tracking-widest leading-none">
                 STEPHANY MANZANO
               </span>
               <span className="text-[10px] font-medium font-editorial italic text-terracotta tracking-[0.2em] uppercase mt-1">
@@ -179,7 +185,7 @@ export function Navbar() {
       <div
         className={`xl:hidden absolute top-full left-0 w-full bg-cream border-b border-coal/5 overflow-hidden transition-all duration-500 ease-in-out ${
           isMobileMenuOpen
-            ? "max-h-[400px] py-8 shadow-xl opacity-100"
+            ? "max-h-100 py-8 shadow-xl opacity-100"
             : "max-h-0 py-0 border-transparent shadow-none opacity-0"
         }`}
       >

@@ -4,11 +4,13 @@ import { FadeIn } from "@/components/motion/FadeIn";
 import Image from "next/image";
 import Link from "next/link";
 
+import type { SanityImageSource } from "@sanity/image-url";
+
 interface CatalogProduct {
   _id: string;
   name: string;
   slug: { current: string };
-  mainImage: any;
+  mainImage: SanityImageSource | null;
   purpose?: string;
   description: string;
   collectionName: string;
@@ -16,25 +18,49 @@ interface CatalogProduct {
 }
 
 // 1. Consulta GROQ: Traemos todos los productos de esta categoría, ordenados alfabéticamente por colección
-async function getCategoryProducts(slug: string) {
-  const query = `*[_type == "product" && category->slug.current == "${slug}"] | order(collection->name asc, name asc) {
-    _id,
-    name,
-    slug,
-    mainImage,
-    purpose,
-    description,
-    "collectionName": collection->name,
-    "categoryName": category->name
-  }`;
-  return client.fetch(query, {}, { next: { revalidate: 60 } });
+async function getCategoryProducts(slug: string): Promise<CatalogProduct[]> {
+  const query = `
+    *[
+      _type == "product" &&
+      category->slug.current == $slug
+    ]
+    | order(collection->name asc, name asc) {
+      _id,
+      name,
+      slug,
+      mainImage,
+      purpose,
+      description,
+      "collectionName": collection->name,
+      "categoryName": category->name
+    }
+  `;
+
+  return client.fetch<CatalogProduct[]>(
+    query,
+    { slug },
+    {
+      next: {
+        revalidate: 60,
+      },
+    },
+  );
 }
 
 export async function generateStaticParams() {
-  const query = `*[_type == "category"]{ "slug": slug.current }`;
-  const categories = await client.fetch(query);
-  return categories.map((cat: any) => ({
-    slug: cat.slug,
+  const query = `
+    *[
+      _type == "category" &&
+      defined(slug.current)
+    ] {
+      "slug": slug.current
+    }
+  `;
+
+  const categories = await client.fetch<Array<{ slug: string }>>(query);
+
+  return categories.map(({ slug }) => ({
+    slug,
   }));
 }
 
@@ -133,10 +159,10 @@ export default async function CollectionPage({
               >
                 <FadeIn>
                   <div className="flex flex-col items-center mb-16">
-                    <h2 className="font-brand text-2xl md:text-4xl text-coal tracking-[0.1em]">
+                    <h2 className="font-brand text-2xl md:text-4xl text-coal tracking-widest">
                       {collectionName}
                     </h2>
-                    <div className="w-8 h-[1px] bg-terracotta mt-6"></div>
+                    <div className="w-8 h-px bg-terracotta mt-6"></div>
                   </div>
 
                   {/* EL GRID DE PRODUCTOS (3 Columnas en Desktop) */}
@@ -151,7 +177,7 @@ export default async function CollectionPage({
                           className="w-full flex flex-col items-center cursor-pointer"
                         >
                           {/* Imagen con Aspect Ratio de Galería */}
-                          <div className="relative w-full aspect-[3/4] overflow-hidden bg-transparent mb-8">
+                          <div className="relative w-full aspect-3/4 overflow-hidden bg-transparent mb-8">
                             {product.mainImage && (
                               <Image
                                 src={urlFor(product.mainImage)

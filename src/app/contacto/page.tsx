@@ -8,8 +8,8 @@ export default function ContactoPage() {
     "Hola,%20me%20gustaría%20saber%20más%20sobre%20las%20piezas%20de%20Stephany%20Manzano%20Home%20Collection.";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
-  const instagramUrl = "https://www.instagram.com/stephanymanzano.mx/"; // Tu link real
-  const tiktokUrl = "https://tiktok.com/@stephanymanzanohc"; // Tu link real
+  const instagramUrl = "https://www.instagram.com/stephanymanzano.mx/";
+  // const tiktokUrl = "https://tiktok.com/@stephanymanzanohc";
 
   return (
     <main className="min-h-screen bg-cream pt-40 pb-24 flex items-center justify-center selection:bg-terracotta selection:text-white">
@@ -42,7 +42,7 @@ export default function ContactoPage() {
 
           {/* REDES SOCIALES (Estilo minimalista) */}
           <div className="mt-16 flex flex-col items-center gap-6">
-            <div className="w-12 h-[1px] bg-coal/10"></div>{" "}
+            <div className="w-12 h-px bg-coal/10"></div>{" "}
             {/* Línea decorativa */}
             <span className="text-coal/50 text-[10px] font-system uppercase tracking-[0.2em]">
               O encuéntranos en

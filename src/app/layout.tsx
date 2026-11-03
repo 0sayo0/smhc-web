@@ -22,10 +22,55 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Stephany Manzano",
-  description: "Piezas artesanales hechas a mano para hogar.",
+  metadataBase: new URL("https://stephanymanzano.com"),
+
+  title: {
+    default: "Stephany Manzano | Home Collection",
+    template: "%s | Stephany Manzano",
+  },
+
+  description:
+    "Descubre Stephany Manzano Home Collection: piezas artesanales de cera, diseño escultórico y objetos decorativos creados con intención para transformar tus espacios.",
+
+  applicationName: "Stephany Manzano Home Collection",
+
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+
+    siteName: "Stephany Manzano Home Collection",
+
+    title: "Stephany Manzano | Home Collection",
+
+    description: "Arte, naturaleza y diseño artesanal para el hogar.",
+
+    url: "/",
+
+    images: [
+      {
+        url: "/hero-smhc.webp",
+        alt: "Stephany Manzano Home Collection",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+
+    title: "Stephany Manzano | Home Collection",
+
+    description: "Piezas artesanales creadas para transformar tus espacios.",
+
+    images: ["/hero-smhc.webp"],
+  },
+
   icons: {
-    icon: "/smhc_logo_nobg.png", // o "/logo.png" si usas otro formato
+    icon: "/smhc_logo_nobg.png",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

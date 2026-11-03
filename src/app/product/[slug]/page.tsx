@@ -6,47 +6,90 @@ import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import type { SanityImageSource } from "@sanity/image-url";
+import type { ComponentProps } from "react";
+
 interface ProductDetail {
   _id: string;
+
   name: string;
-  slug: { current: string };
-  mainImage: any;
-  gallery: any[];
-  category: { name: string };
-  collection: { name: string };
-  dimensions: string;
-  material: string[];
-  purpose?: string; // <-- AGREGADO: El nuevo campo
-  story: any;
-  whatsappMessage: string;
-  inStock: boolean;
+
+  slug: {
+    current: string;
+  };
+
+  mainImage: SanityImageSource | null;
+
+  gallery: SanityImageSource[] | null;
+
+  category: {
+    name: string;
+  } | null;
+
+  collection: {
+    name: string;
+  } | null;
+
+  dimensions: string | null;
+
+  material: string[] | null;
+
+  purpose?: string | null;
+
+  story: ComponentProps<typeof PortableText>["value"] | null;
+
+  whatsappMessage: string | null;
+
+  inStock: boolean | null;
 }
 
-async function getProduct(slug: string) {
-  // AGREGADO: Pedimos 'purpose' a Sanity
-  const query = `*[_type == "product" && slug.current == "${slug}"][0]{
-    _id,
-    name,
-    slug,
-    mainImage,
-    gallery,
-    category->{name},
-    collection->{name},
-    dimensions,
-    material,
-    purpose, 
-    story,
-    whatsappMessage,
-    inStock
-  }`;
-  return client.fetch(query, {}, { next: { revalidate: 60 } });
+async function getProduct(slug: string): Promise<ProductDetail | null> {
+  const query = `
+    *[
+      _type == "product" &&
+      slug.current == $slug
+    ][0] {
+      _id,
+      name,
+      slug,
+      mainImage,
+      gallery,
+      category->{name},
+      collection->{name},
+      dimensions,
+      material,
+      purpose,
+      story,
+      whatsappMessage,
+      inStock
+    }
+  `;
+
+  return client.fetch<ProductDetail | null>(
+    query,
+    { slug },
+    {
+      next: {
+        revalidate: 60,
+      },
+    },
+  );
 }
 
 export async function generateStaticParams() {
-  const query = `*[_type == "product"]{ "slug": slug.current }`;
-  const products = await client.fetch(query);
-  return products.map((product: any) => ({
-    slug: product.slug,
+  const query = `
+    *[
+      _type == "product" &&
+      defined(slug.current)
+    ] {
+      "slug": slug.current
+    }
+  `;
+
+  const products = await client.fetch<Array<{ slug: string }>>(query);
+
+  return products.map(({ slug }) => ({
+    slug,
   }));
 }
 
@@ -56,7 +99,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product: ProductDetail = await getProduct(slug);
+  const product = await getProduct(slug);
 
   if (!product) {
     return (
@@ -65,8 +108,9 @@ export default async function ProductPage({
   }
 
   const phoneNumber = "5214612771367";
+  const defaultMessage = "Hola, me interesa la pieza";
   const encodedMessage = encodeURIComponent(
-    `${product.whatsappMessage} ${product.name}`,
+    `${product.whatsappMessage?.trim() || defaultMessage} ${product.name}`,
   );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 

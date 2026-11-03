@@ -2,8 +2,14 @@ import { client, urlFor } from "@/lib/sanity";
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Carousel } from "@/components/ui/Carousel";
+import {
+  SeasonalHero,
+  type SeasonalCampaign,
+} from "@/components/home/SeasonalHero";
 import Image from "next/image";
 import Link from "next/link";
+
+import type { SanityImageSource } from "@sanity/image-url";
 
 // 1. Nuevas interfaces para soportar la estructura del Curador
 interface Product {
@@ -11,7 +17,7 @@ interface Product {
   name: string;
   description: string;
   purpose?: string;
-  mainImage: any;
+  mainImage: SanityImageSource | null;
   slug: { current: string };
 }
 
@@ -22,22 +28,52 @@ interface CarouselSection {
 }
 
 // 2. Consulta GROQ Avanzada: Trae las vitrinas, expande el nombre de la categoría y los productos seleccionados
-async function getHomeData() {
-  const query = `*[_type == "homeCurator"][0] {
-    carousels[] {
-      "categoryName": category->name,
-      "categorySlug": category->slug.current,
-      selectedProducts[]-> {
-        _id,
-        name,
+interface HomeData {
+  seasonalCampaign?: SeasonalCampaign | null;
+  carousels?: CarouselSection[] | null;
+}
+
+async function getHomeData(): Promise<HomeData | null> {
+  const query = `
+    *[_type == "homeCurator"][0] {
+      seasonalCampaign {
+        enabled,
+        eyebrow,
+        headline,
         description,
-        purpose, 
-        mainImage,
-        slug
+        ctaLabel,
+        ctaHref,
+        image {
+          asset,
+          alt
+        }
+      },
+
+      carousels[] {
+        "categoryName": category->name,
+        "categorySlug": category->slug.current,
+
+        selectedProducts[]-> {
+          _id,
+          name,
+          description,
+          purpose,
+          mainImage,
+          slug
+        }
       }
     }
-  }`;
-  return client.fetch(query, {}, { next: { revalidate: 60 } });
+  `;
+
+  return client.fetch<HomeData | null>(
+    query,
+    {},
+    {
+      next: {
+        revalidate: 60,
+      },
+    },
+  );
 }
 
 export default async function Home() {
@@ -48,41 +84,11 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-cream selection:bg-terracotta selection:text-white pb-32">
       {/* 1. HERO ENMARCADO Y PROPORCIONADO */}
-      <section className="pt-40 md:pt-48 pb-16 px-6 md:px-12 flex justify-center items-center w-full">
-        <div className="relative w-full max-w-6xl aspect-[4/5] md:aspect-[21/12] overflow-hidden bg-coal/5 shadow-sm group">
-          <Image
-            src="/hero-smhc.webp"
-            alt="Stephany Manzano Home Collection"
-            fill
-            priority
-            className="object-cover scale-100 group-hover:scale-105 transition-transform duration-[20s] ease-out filter-hero"
-          />
-
-          <div className="absolute inset-0 bg-coal/20 bg-gradient-to-t from-coal/60 via-coal/10 to-transparent"></div>
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-            <FadeIn>
-              <span className="text-cream/90 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.4em] mb-4 block drop-shadow-md">
-                Nueva Colección
-              </span>
-              <h2 className="font-brand text-4xl md:text-5xl lg:text-6xl text-cream mb-8 tracking-wide drop-shadow-lg max-w-3xl">
-                La luz transformada en arte.
-              </h2>
-
-              {/* El botón ahora apunta dinámicamente a la primera vitrina */}
-              <a
-                href="#vitrina-0"
-                className="inline-block bg-cream text-coal px-8 py-3.5 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.2em] hover:bg-coal hover:text-cream transition-colors duration-500 shadow-xl"
-              >
-                Descubrir Piezas
-              </a>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
+      {/* PORTADA EDITORIAL */}
+      <SeasonalHero campaign={homeData?.seasonalCampaign} />
 
       {/* 2. EL MANIFIESTO */}
-      <section className="py-20 text-center px-4">
+      <section id="piezas" className="scroll-mt-24 py-20 text-center px-4">
         <Container>
           <FadeIn>
             <h2 className="font-brand text-2xl md:text-4xl text-coal mb-6 leading-tight max-w-3xl mx-auto tracking-wide">
@@ -110,7 +116,7 @@ export default async function Home() {
                 <h3 className="font-brand text-2xl md:text-3xl tracking-[0.15em] text-coal uppercase">
                   {carousel.categoryName}
                 </h3>
-                <div className="w-12 h-[1px] bg-coal/20 mt-6"></div>
+                <div className="w-12 h-px bg-coal/20 mt-6"></div>
               </div>
             </FadeIn>
           </Container>
@@ -125,7 +131,7 @@ export default async function Home() {
                   href={`/product/${product.slug.current}`}
                   className="flex flex-col items-center text-center cursor-pointer"
                 >
-                  <div className="relative w-full aspect-[3/4] overflow-hidden bg-transparent mb-8">
+                  <div className="relative w-full aspect-3/4 overflow-hidden bg-transparent mb-8">
                     {product.mainImage && (
                       <Image
                         src={urlFor(product.mainImage)
@@ -160,7 +166,7 @@ export default async function Home() {
                 href={`/coleccion/${carousel.categorySlug}`}
                 className="w-full h-full flex flex-col items-center justify-center py-28"
               >
-                <div className="w-8 h-[1px] bg-coal group-hover/link:bg-cream mb-4 transition-colors"></div>
+                <div className="w-8 h-px bg-coal group-hover/link:bg-cream mb-4 transition-colors"></div>
                 <span className="text-[10px] md:text-xs font-system uppercase tracking-widest font-semibold text-coal group-hover/link:text-cream transition-colors px-4 text-center">
                   Descubrir más
                 </span>
@@ -171,7 +177,7 @@ export default async function Home() {
       ))}
 
       {/* 4. BODEGÓN HÍBRIDO: CERA AROMÁTICA */}
-      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
+      <section className="py-24 px-6 md:px-12 max-w-340 mx-auto mt-10">
         <FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
             <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 md:px-0 order-2 md:order-1">
@@ -195,7 +201,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5 order-1 md:order-2">
+            <div className="relative w-full aspect-4/5 overflow-hidden bg-coal/5 order-1 md:order-2">
               <Image
                 src="https://images.pexels.com/photos/7004676/pexels-photo-7004676.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 alt="Colección Cera Aromática"
@@ -208,10 +214,10 @@ export default async function Home() {
       </section>
 
       {/* 5. BODEGÓN HÍBRIDO: PIEDRA ESCULTURAL */}
-      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
+      <section className="py-24 px-6 md:px-12 max-w-340 mx-auto mt-10">
         <FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5">
+            <div className="relative w-full aspect-4/5 overflow-hidden bg-coal/5">
               <Image
                 src="https://images.pexels.com/photos/4207788/pexels-photo-4207788.jpeg?auto=compress&cs=tinysrgb&w=1200"
                 alt="Ambiente Stephany Manzano"

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 
+import Image from "next/image";
+
 export function Footer() {
   return (
     <footer className="bg-coal text-cream pt-20 pb-10 border-t border-coal">
@@ -9,11 +11,15 @@ export function Footer() {
           {/* BLOQUE IZQUIERDO: Logo y Manifiesto */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             {/* EL SELLO (Logo) */}
-            <img
-              src="/smhc_logo_nobg.png"
-              alt="Sello Stephany Manzano"
-              className="w-12 md:w-14 mb-6 brightness-0 invert opacity-60"
-            />
+            <div className="relative mb-6 h-16 w-14">
+              <Image
+                src="/smhc_logo_nobg.png"
+                alt="Sello Stephany Manzano"
+                fill
+                sizes="56px"
+                className="object-contain brightness-0 invert opacity-60"
+              />
+            </div>
 
             <span className="text-2xl md:text-3xl font-brand tracking-[0.15em] text-cream">
               STEPHANY MANZANO
