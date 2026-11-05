@@ -4,6 +4,7 @@ import "./globals.css";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Ajusta la ruta si es necesario
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { getNavigationCategories } from "@/lib/navigation";
 
 const tenor = Tenor_Sans({
   subsets: ["latin"],
@@ -74,21 +75,61 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const categories = await getNavigationCategories();
+
   return (
     <html
       lang="es"
       className={`${tenor.variable} ${lora.variable} ${montserrat.variable}`}
     >
       <body className="relative">
-        {" "}
-        <Navbar />
-        {children}
+        {/* ACCESSIBILITY — SKIP LINK */}
+
+        <a
+          href="#contenido"
+          className="
+            sr-only
+
+            fixed
+            left-4
+            top-4
+            z-100
+
+            bg-coal
+            px-5
+            py-3
+
+            font-system
+            text-sm
+            text-cream
+
+            focus:not-sr-only
+          "
+        >
+          Saltar al contenido principal
+        </a>
+
+        {/* GLOBAL NAVIGATION */}
+
+        <Navbar categories={categories} />
+
+        {/* PAGE CONTENT */}
+
+        <div id="contenido" tabIndex={-1} className="scroll-mt-24">
+          {children}
+        </div>
+
+        {/* GLOBAL FOOTER */}
+
         <Footer />
+
+        {/* CUSTOMER CONTACT */}
+
         <WhatsAppButton />
       </body>
     </html>

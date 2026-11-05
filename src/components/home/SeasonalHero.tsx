@@ -76,12 +76,7 @@ export function SeasonalHero({ campaign }: SeasonalHeroProps) {
     <section
       aria-labelledby="home-hero-title"
       className="
-        relative
-        pt-24
-        pb-8
-        sm:pt-28
-        xl:pt-46
-        xl:pb-6
+        relative pt-28 pb-8 sm:pt-32 lg:pt-40 xl:pt-40 xl:pb-6
       "
     >
       <div
@@ -101,7 +96,7 @@ export function SeasonalHero({ campaign }: SeasonalHeroProps) {
             border-coal/10
             bg-warm
 
-            lg:min-h-[min(740px,calc(100svh-12rem))]
+            lg:min-h-[min(700px,calc(100svh-13rem))]
             lg:grid-cols-[0.94fr_1.06fr]
           "
         >
