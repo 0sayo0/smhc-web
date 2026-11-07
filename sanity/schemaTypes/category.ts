@@ -35,10 +35,10 @@ export const category = defineType({
       name: 'description',
       title: 'Descripción editorial',
       type: 'text',
+
       rows: 3,
 
-      description:
-        'Descripción breve de la categoría. Podrá utilizarse en la navegación y en su página principal.',
+      description: 'Texto que presenta la identidad y el concepto de esta categoría.',
     }),
 
     // ========================================
@@ -53,7 +53,48 @@ export const category = defineType({
       to: [{type: 'category'}],
 
       description:
-        'Deja este campo vacío para las categorías principales. Las subcategorías se habilitarán cuando adaptemos las rutas del catálogo.',
+        'Déjalo vacío para categorías principales. Selecciona una categoría principal para crear una subcategoría.',
+
+      options: {
+        filter: ({document}) => {
+          const id = document._id?.replace(/^drafts\./, '') ?? ''
+
+          return {
+            filter: '!defined(parent._ref) && _id != $id && _id != $draftId',
+
+            params: {
+              id,
+              draftId: `drafts.${id}`,
+            },
+          }
+        },
+      },
+    }),
+
+    // ========================================
+    // IDENTIDAD VISUAL
+    // ========================================
+
+    defineField({
+      name: 'coverImage',
+      title: 'Fotografía editorial',
+      type: 'image',
+
+      description: 'Imagen protagonista de la categoría. Utiliza fotografías originales de SMHC.',
+
+      options: {
+        hotspot: true,
+      },
+
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Descripción de la imagen',
+          type: 'string',
+
+          validation: (Rule) => Rule.required(),
+        }),
+      ],
     }),
 
     // ========================================
@@ -65,8 +106,7 @@ export const category = defineType({
       title: 'Nombre en navegación',
       type: 'string',
 
-      description:
-        'Opcional. Permite mostrar un nombre diferente en el menú sin modificar el nombre oficial de la categoría.',
+      description: 'Nombre opcional para mostrar en menús y tarjetas.',
     }),
 
     defineField({
@@ -75,8 +115,6 @@ export const category = defineType({
       type: 'number',
 
       initialValue: 100,
-
-      description: 'Utiliza números menores para mostrar una categoría antes que las demás.',
 
       validation: (Rule) => Rule.integer().min(0),
     }),
@@ -88,8 +126,7 @@ export const category = defineType({
 
       initialValue: true,
 
-      description:
-        'Controla si esta categoría aparece en el menú principal. No elimina la categoría ni sus productos.',
+      description: 'Controla su aparición en el menú principal.',
     }),
   ],
 })

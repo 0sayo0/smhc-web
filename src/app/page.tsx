@@ -163,7 +163,7 @@ export default async function Home() {
             {/* Tarjeta de "Ver Toda la Colección" dinámica */}
             <div className="min-w-[65vw] md:min-w-[28vw] lg:min-w-[18vw] snap-center flex items-center justify-center border border-coal/10 hover:bg-coal group/link transition-colors duration-500 cursor-pointer">
               <Link
-                href={`/coleccion/${carousel.categorySlug}`}
+                href={`/catalogo/${carousel.categorySlug}`}
                 className="w-full h-full flex flex-col items-center justify-center py-28"
               >
                 <div className="w-8 h-px bg-coal group-hover/link:bg-cream mb-4 transition-colors"></div>

@@ -218,7 +218,7 @@ export function Navbar({ categories }: NavbarProps) {
     setIsMobileOpen(false);
   };
 
-  const getCategoryHref = (slug: string) => `/coleccion/${slug}`;
+  const getCategoryHref = (slug: string) => `/catalogo/${slug}`;
 
   // ========================================
   // RENDER
@@ -257,7 +257,7 @@ export function Navbar({ categories }: NavbarProps) {
           ease-out
           motion-reduce:transition-none
 
-          ${isScrolled ? "lg:h-[80px]" : "lg:h-[116px]"}
+          ${isScrolled ? "lg:h-20" : "lg:h-29"}
         `}
       >
         {/* =====================================
@@ -763,6 +763,99 @@ export function Navbar({ categories }: NavbarProps) {
                           "
                         />
                       </Link>
+                      {/* SUBCATEGORY NAVIGATION */}
+
+                      {category.children.length > 0 && (
+                        <div
+                          className="
+      border-t
+      border-coal/10
+
+      bg-cream
+
+      px-8
+      py-7
+    "
+                        >
+                          <span
+                            className="
+        font-system
+        text-[9px]
+        font-semibold
+        uppercase
+        tracking-[0.2em]
+
+        text-terracotta
+      "
+                          >
+                            Explorar por tipo
+                          </span>
+
+                          <div
+                            className="
+        mt-5
+
+        flex
+        flex-col
+        gap-4
+      "
+                          >
+                            {category.children.map((child) => {
+                              const childHref = `/catalogo/${category.slug}/${child.slug}`;
+
+                              return (
+                                <Link
+                                  key={child._id}
+                                  href={childHref}
+                                  onClick={closeMenus}
+                                  aria-current={
+                                    pathname === childHref ? "page" : undefined
+                                  }
+                                  className="
+              group/sub
+
+              flex
+              items-center
+              justify-between
+              gap-4
+
+              py-1
+
+              font-editorial
+              text-sm
+
+              text-coal/75
+
+              transition-colors
+              duration-300
+
+              hover:text-terracotta
+
+              aria-[current=page]:text-terracotta
+            "
+                                >
+                                  <span>{child.label}</span>
+
+                                  <ArrowUpRight
+                                    aria-hidden="true"
+                                    size={15}
+                                    strokeWidth={1.5}
+                                    className="
+                shrink-0
+
+                transition-transform
+                duration-300
+
+                motion-safe:group-hover/sub:-translate-y-0.5
+                motion-safe:group-hover/sub:translate-x-0.5
+              "
+                                  />
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </motion.li>
                   );
                 })}
@@ -933,6 +1026,68 @@ export function Navbar({ categories }: NavbarProps) {
                           "
                         />
                       </Link>
+                      {/* MOBILE SUBCATEGORIES */}
+
+                      {category.children.length > 0 && (
+                        <div
+                          className="
+      flex
+      flex-col
+
+      gap-5
+
+      border-b
+      border-coal/15
+
+      px-5
+      py-6
+    "
+                        >
+                          {category.children.map((child) => {
+                            const childHref = `/catalogo/${category.slug}/${child.slug}`;
+
+                            return (
+                              <Link
+                                key={child._id}
+                                href={childHref}
+                                onClick={closeMenus}
+                                aria-current={
+                                  pathname === childHref ? "page" : undefined
+                                }
+                                className="
+            flex
+            min-h-11
+            items-center
+            justify-between
+
+            gap-4
+
+            font-editorial
+            text-base
+
+            text-coal/70
+
+            transition-colors
+            duration-300
+
+            hover:text-terracotta
+
+            aria-[current=page]:text-terracotta
+          "
+                              >
+                                {child.label}
+
+                                <ArrowUpRight
+                                  aria-hidden="true"
+                                  size={15}
+                                  strokeWidth={1.5}
+                                  className="shrink-0"
+                                />
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
                     </motion.div>
                   );
                 })}

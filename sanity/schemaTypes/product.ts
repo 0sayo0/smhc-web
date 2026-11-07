@@ -24,9 +24,19 @@ export const product = defineType({
     // --- Classification ---
     defineField({
       name: 'category',
-      title: 'Categoría',
+      title: 'Categoría del producto',
       type: 'reference',
-      to: [{type: 'category'}],
+
+      to: [
+        {
+          type: 'category',
+        },
+      ],
+
+      description:
+        'Selecciona la clasificación más específica disponible. Por ejemplo: Cera Decorativa.',
+
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'collection',
