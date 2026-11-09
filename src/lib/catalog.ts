@@ -61,7 +61,7 @@ const categoryFields = `
   coverImage
 `;
 
-const productFields = `
+export const catalogProductProjection = `
   _id,
   name,
   "slug": slug.current,
@@ -69,7 +69,11 @@ const productFields = `
   purpose,
   mainImage,
 
-  "collectionName": collection->name,
+  "collectionName": coalesce(
+    collections[0]->name,
+    collection->name
+  ),
+
   "categoryName": category->name
 `;
 
@@ -204,7 +208,7 @@ export const getCategoryPageData = cache(
         ${productFilter}
       ]
       | order(name asc) {
-        ${productFields}
+        ${catalogProductProjection}
       }
     `;
 

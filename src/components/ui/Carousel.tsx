@@ -17,7 +17,7 @@ export function Carousel({ children }: { children: ReactNode }) {
   return (
     // 1. Usamos group/carousel para no interferir con los productos
     // 2. max-w-[90rem] y mx-auto centran el carrusel para que no se estire al infinito
-    <div className="relative group/carousel max-w-[90rem] mx-auto">
+    <div className="relative group/carousel max-w-360 mx-auto">
       {/* BOTÓN IZQUIERDA (Más grande, con sombra y siempre semi-visible) */}
       <button
         onClick={() => scroll("left")}

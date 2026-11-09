@@ -424,6 +424,28 @@ export function Navbar({ categories }: NavbarProps) {
           "
         >
           <Link
+            href="/colecciones"
+            onClick={closeMenus}
+            aria-current={
+              pathname === "/colecciones" ||
+              pathname.startsWith("/colecciones/")
+                ? "page"
+                : undefined
+            }
+            className="
+    font-system text-[10px]
+    font-semibold uppercase
+    tracking-[0.18em]
+    text-coal
+    transition-colors duration-300
+    hover:text-terracotta
+    aria-[current=page]:text-terracotta
+  "
+          >
+            Colecciones
+          </Link>
+
+          <Link
             href="/nosotros"
             onClick={closeMenus}
             aria-current={pathname === "/nosotros" ? "page" : undefined}
@@ -1100,6 +1122,29 @@ export function Navbar({ categories }: NavbarProps) {
                   mt-12 flex flex-col gap-7
                 "
               >
+                <Link
+                  href="/colecciones"
+                  onClick={closeMenus}
+                  ref={categories.length === 0 ? firstMobileLinkRef : undefined}
+                  aria-current={
+                    pathname === "/colecciones" ||
+                    pathname.startsWith("/colecciones/")
+                      ? "page"
+                      : undefined
+                  }
+                  className="
+    font-system text-[11px]
+    font-semibold uppercase
+    tracking-[0.18em]
+    text-coal
+    transition-colors duration-300
+    hover:text-terracotta
+    aria-[current=page]:text-terracotta
+  "
+                >
+                  Colecciones
+                </Link>
+
                 <Link
                   href="/nosotros"
                   onClick={closeMenus}

@@ -38,11 +38,29 @@ export const product = defineType({
 
       validation: (Rule) => Rule.required(),
     }),
+    // Referencia antigua: conservar durante la migración.
     defineField({
       name: 'collection',
-      title: 'Colección',
+      title: 'Colección anterior',
       type: 'reference',
       to: [{type: 'collection'}],
+      readOnly: true,
+      hidden: true,
+    }),
+
+    // Nuevo sistema: múltiples colecciones.
+    defineField({
+      name: 'collections',
+      title: 'Colecciones editoriales',
+      type: 'array',
+      description:
+        'Una pieza puede pertenecer a varias colecciones, por ejemplo Jardín Eterno y Edición Navideña.',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'collection'}],
+        },
+      ],
     }),
 
     // --- Visual ---
