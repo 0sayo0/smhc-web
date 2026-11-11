@@ -6,6 +6,10 @@ import {
   SeasonalHero,
   type SeasonalCampaign,
 } from "@/components/home/SeasonalHero";
+import {
+  FeaturedCollection,
+  type FeaturedCollectionConfig,
+} from "@/components/home/FeaturedCollection";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,12 +34,20 @@ interface CarouselSection {
 // 2. Consulta GROQ Avanzada: Trae las vitrinas, expande el nombre de la categoría y los productos seleccionados
 interface HomeData {
   seasonalCampaign?: SeasonalCampaign | null;
+
+  featuredCollection?: FeaturedCollectionConfig | null;
+
   carousels?: CarouselSection[] | null;
 }
 
 async function getHomeData(): Promise<HomeData | null> {
   const query = `
     *[_type == "homeCurator"][0] {
+
+      // ====================================
+      // SEASONAL CAMPAIGN
+      // ====================================
+
       seasonalCampaign {
         enabled,
         eyebrow,
@@ -43,14 +55,43 @@ async function getHomeData(): Promise<HomeData | null> {
         description,
         ctaLabel,
         ctaHref,
+
         image {
           asset,
           alt
         }
       },
 
+      // ====================================
+      // FEATURED COLLECTION
+      // ====================================
+
+      featuredCollection {
+        enabled,
+
+        "collection": collection-> {
+          _id,
+          name,
+
+          "slug": slug.current,
+
+          kind,
+          eyebrow,
+          description,
+
+          coverImage,
+
+          showOnSite
+        }
+      },
+
+      // ====================================
+      // HOME PRODUCT CAROUSELS
+      // ====================================
+
       carousels[] {
         "categoryName": category->name,
+
         "categorySlug": category->slug.current,
 
         selectedProducts[]-> {
@@ -102,6 +143,12 @@ export default async function Home() {
           </FadeIn>
         </Container>
       </section>
+
+      {/* ========================================
+    COLECCIÓN EDITORIAL DESTACADA
+   ======================================== */}
+
+      <FeaturedCollection config={homeData?.featuredCollection} />
 
       {/* 3. VITRINAS DINÁMICAS (Iteramos sobre los datos de Sanity) */}
       {carousels.map((carousel, index) => (

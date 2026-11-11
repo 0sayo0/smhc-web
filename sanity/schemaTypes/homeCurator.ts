@@ -95,6 +95,45 @@ export const homeCurator = defineType({
         }),
       ],
     }),
+    // ========================================
+    // COLECCIÓN EDITORIAL DESTACADA
+    // ========================================
+
+    defineField({
+      name: 'featuredCollection',
+      title: 'Colección Destacada',
+      description:
+        'Selecciona la colección editorial que protagonizará una sección especial del Home.',
+
+      type: 'object',
+
+      fields: [
+        defineField({
+          name: 'enabled',
+          title: 'Mostrar colección destacada',
+          type: 'boolean',
+
+          initialValue: false,
+
+          description: 'Activa o desactiva esta sección sin modificar la colección original.',
+        }),
+
+        defineField({
+          name: 'collection',
+          title: 'Colección protagonista',
+          type: 'reference',
+
+          to: [{type: 'collection'}],
+
+          options: {
+            filter: 'showOnSite == true && defined(slug.current)',
+          },
+
+          description:
+            'Selecciona una colección publicada y habilitada para mostrarse en el sitio.',
+        }),
+      ],
+    }),
     defineField({
       name: 'carousels',
       title: 'Vitrinas (Carruseles del Home)',
