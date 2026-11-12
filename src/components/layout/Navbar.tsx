@@ -1148,7 +1148,6 @@ export function Navbar({ categories }: NavbarProps) {
                 <Link
                   href="/nosotros"
                   onClick={closeMenus}
-                  ref={categories.length === 0 ? firstMobileLinkRef : undefined}
                   className="
                     font-system text-[11px]
                     font-semibold uppercase
