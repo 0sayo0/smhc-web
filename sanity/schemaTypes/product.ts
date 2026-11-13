@@ -24,29 +24,97 @@ export const product = defineType({
     // --- Classification ---
     defineField({
       name: 'category',
-      title: 'Categoría',
+      title: 'Categoría del producto',
       type: 'reference',
-      to: [{type: 'category'}],
+
+      to: [
+        {
+          type: 'category',
+        },
+      ],
+
+      description:
+        'Selecciona la clasificación más específica disponible. Por ejemplo: Cera Decorativa.',
+
+      validation: (Rule) => Rule.required(),
     }),
+    // Referencia antigua: conservar durante la migración.
     defineField({
       name: 'collection',
-      title: 'Colección',
+      title: 'Colección anterior',
       type: 'reference',
       to: [{type: 'collection'}],
+      readOnly: true,
+      hidden: true,
+    }),
+
+    // Nuevo sistema: múltiples colecciones.
+    defineField({
+      name: 'collections',
+      title: 'Colecciones editoriales',
+      type: 'array',
+      description:
+        'Una pieza puede pertenecer a varias colecciones, por ejemplo Jardín Eterno y Edición Navideña.',
+      of: [
+        {
+          type: 'reference',
+          to: [{type: 'collection'}],
+        },
+      ],
     }),
 
     // --- Visual ---
+    // ========================================
+    // PRODUCT PHOTOGRAPHY
+    // ========================================
+
     defineField({
       name: 'mainImage',
-      title: 'Imagen Principal (Portada)',
+      title: 'Fotografía principal',
       type: 'image',
-      options: {hotspot: true},
+
+      options: {
+        hotspot: true,
+      },
+
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Descripción de la fotografía',
+          type: 'string',
+
+          description:
+            'Describe lo que aparece en la fotografía. Ejemplo: Arreglo Jardín Eterno Clásico con flores artesanales rosadas y recipiente blanco.',
+        }),
+      ],
     }),
+
     defineField({
       name: 'gallery',
-      title: 'Galería de Fotos',
+      title: 'Galería de fotografías',
       type: 'array',
-      of: [{type: 'image'}],
+
+      description: 'Agrega fotografías de diferentes ángulos, acabados y detalles de la pieza.',
+
+      of: [
+        {
+          type: 'image',
+
+          options: {
+            hotspot: true,
+          },
+
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Descripción de la fotografía',
+              type: 'string',
+
+              description: 'Describe el ángulo o detalle específico que aparece.',
+            }),
+          ],
+        },
+      ],
     }),
 
     // --- Storytelling ---

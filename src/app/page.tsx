@@ -1,247 +1,290 @@
-import { client, urlFor } from "@/lib/sanity";
+import Link from "next/link";
+
+import type { Metadata } from "next";
+
+import { ArrowUpRight } from "lucide-react";
+
+import { client } from "@/lib/sanity";
+
+import {
+  getRootCategories,
+  catalogProductProjection,
+  type CatalogProduct,
+} from "@/lib/catalog";
+
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Carousel } from "@/components/ui/Carousel";
-import Image from "next/image";
-import Link from "next/link";
 
-// 1. Nuevas interfaces para soportar la estructura del Curador
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  purpose?: string;
-  mainImage: any;
-  slug: { current: string };
+import { ProductCard } from "@/components/catalog/ProductCard";
+
+import {
+  SeasonalHero,
+  type SeasonalCampaign,
+} from "@/components/home/SeasonalHero";
+
+import {
+  FeaturedCollection,
+  type FeaturedCollectionConfig,
+} from "@/components/home/FeaturedCollection";
+
+import { ExploreMaterials } from "@/components/home/ExploreMaterials";
+
+// ========================================
+// HOME METADATA
+// ========================================
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
+
+// ========================================
+// TYPES
+// ========================================
+
+interface HomeCarousel {
+  _key?: string;
+
+  categoryName: string | null;
+  categorySlug: string | null;
+
+  selectedProducts: Array<CatalogProduct | null> | null;
 }
 
-interface CarouselSection {
-  categoryName: string;
-  categorySlug: string;
-  selectedProducts: Product[];
+interface HomeData {
+  seasonalCampaign?: SeasonalCampaign | null;
+
+  featuredCollection?: FeaturedCollectionConfig | null;
+
+  carousels?: HomeCarousel[] | null;
 }
 
-// 2. Consulta GROQ Avanzada: Trae las vitrinas, expande el nombre de la categoría y los productos seleccionados
-async function getHomeData() {
-  const query = `*[_type == "homeCurator"][0] {
-    carousels[] {
-      "categoryName": category->name,
-      "categorySlug": category->slug.current,
-      selectedProducts[]-> {
-        _id,
-        name,
+// ========================================
+// HOME DATA
+// ========================================
+
+async function getHomeData(): Promise<HomeData | null> {
+  const query = `
+    *[_type == "homeCurator"][0] {
+
+      seasonalCampaign {
+        enabled,
+        eyebrow,
+        headline,
         description,
-        purpose, 
-        mainImage,
-        slug
+        ctaLabel,
+        ctaHref,
+
+        image {
+          asset,
+          alt
+        }
+      },
+
+      featuredCollection {
+        enabled,
+
+        "collection": collection-> {
+          _id,
+          name,
+          "slug": slug.current,
+          kind,
+          eyebrow,
+          description,
+          coverImage,
+          showOnSite
+        }
+      },
+
+      carousels[] {
+        _key,
+
+        "categoryName": category->name,
+        "categorySlug": category->slug.current,
+
+        selectedProducts[]-> {
+          ${catalogProductProjection}
+        }
       }
     }
-  }`;
-  return client.fetch(query, {}, { next: { revalidate: 60 } });
+  `;
+
+  return client.fetch<HomeData | null>(
+    query,
+    {},
+    {
+      next: {
+        revalidate: 60,
+      },
+    },
+  );
 }
 
+// ========================================
+// HOME PAGE
+// ========================================
+
 export default async function Home() {
-  // 3. Ejecutamos la consulta
-  const homeData = await getHomeData();
-  const carousels: CarouselSection[] = homeData?.carousels || [];
+  const [homeData, categories] = await Promise.all([
+    getHomeData(),
+    getRootCategories(),
+  ]);
+
+  // Prepare only valid, non-empty showcases.
+  const carousels = (homeData?.carousels ?? []).flatMap((carousel) => {
+    if (!carousel.categoryName || !carousel.categorySlug) {
+      return [];
+    }
+
+    const products = (carousel.selectedProducts ?? []).filter(
+      (product): product is CatalogProduct =>
+        Boolean(product?._id && product?.name && product?.slug),
+    );
+
+    if (products.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        key: carousel._key || carousel.categorySlug,
+        categoryName: carousel.categoryName,
+        categorySlug: carousel.categorySlug,
+        products,
+      },
+    ];
+  });
 
   return (
-    <main className="min-h-screen bg-cream selection:bg-terracotta selection:text-white pb-32">
-      {/* 1. HERO ENMARCADO Y PROPORCIONADO */}
-      <section className="pt-40 md:pt-48 pb-16 px-6 md:px-12 flex justify-center items-center w-full">
-        <div className="relative w-full max-w-6xl aspect-[4/5] md:aspect-[21/12] overflow-hidden bg-coal/5 shadow-sm group">
-          <Image
-            src="/hero-smhc.webp"
-            alt="Stephany Manzano Home Collection"
-            fill
-            priority
-            className="object-cover scale-100 group-hover:scale-105 transition-transform duration-[20s] ease-out filter-hero"
-          />
+    <main className="min-h-screen bg-cream pb-16 selection:bg-terracotta selection:text-white">
+      {/* =====================================
+          01 — MAIN EDITORIAL HERO
+         ===================================== */}
 
-          <div className="absolute inset-0 bg-coal/20 bg-gradient-to-t from-coal/60 via-coal/10 to-transparent"></div>
+      <SeasonalHero campaign={homeData?.seasonalCampaign} />
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-            <FadeIn>
-              <span className="text-cream/90 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.4em] mb-4 block drop-shadow-md">
-                Nueva Colección
-              </span>
-              <h2 className="font-brand text-4xl md:text-5xl lg:text-6xl text-cream mb-8 tracking-wide drop-shadow-lg max-w-3xl">
-                La luz transformada en arte.
-              </h2>
+      {/* =====================================
+          02 — BRAND MANIFESTO
+         ===================================== */}
 
-              {/* El botón ahora apunta dinámicamente a la primera vitrina */}
-              <a
-                href="#vitrina-0"
-                className="inline-block bg-cream text-coal px-8 py-3.5 text-[10px] md:text-xs font-system font-bold uppercase tracking-[0.2em] hover:bg-coal hover:text-cream transition-colors duration-500 shadow-xl"
-              >
-                Descubrir Piezas
-              </a>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. EL MANIFIESTO */}
-      <section className="py-20 text-center px-4">
+      <section
+        aria-labelledby="home-manifesto-title"
+        className="px-6 py-24 text-center md:py-32"
+      >
         <Container>
           <FadeIn>
-            <h2 className="font-brand text-2xl md:text-4xl text-coal mb-6 leading-tight max-w-3xl mx-auto tracking-wide">
-              El arte de la luz y la naturaleza encapsulada.
+            <span className="font-system text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">
+              Nuestra esencia
+            </span>
+
+            <h2
+              id="home-manifesto-title"
+              className="mx-auto mt-8 max-w-3xl font-brand text-[clamp(2rem,3.5vw,3.5rem)] leading-[1.2] tracking-[-0.025em] text-coal text-balance"
+            >
+              El arte de crear
+              <br className="hidden sm:block" /> con intención.
             </h2>
-            <p className="font-editorial text-base md:text-lg text-coal/60 max-w-2xl mx-auto leading-relaxed italic">
-              Cada pieza es creada con intención y delicadeza. Desde la calidez
-              de nuestras velas de cera de soya artesanal, hasta la eternidad
-              encapsulada en cada Gran Jardín Eterno.
+
+            <div
+              aria-hidden="true"
+              className="mx-auto mt-8 h-px w-12 bg-terracotta"
+            />
+
+            <p className="mx-auto mt-8 max-w-2xl font-editorial text-base leading-8 text-coal/70 md:text-lg md:leading-9">
+              Cada pieza nace del encuentro entre la creatividad, los materiales
+              y el trabajo artesanal. Una invitación a descubrir belleza en las
+              formas, las texturas y los pequeños detalles de la vida cotidiana.
             </p>
           </FadeIn>
         </Container>
       </section>
 
-      {/* 3. VITRINAS DINÁMICAS (Iteramos sobre los datos de Sanity) */}
+      {/* =====================================
+          03 — FEATURED EDITORIAL COLLECTION
+         ===================================== */}
+
+      <FeaturedCollection config={homeData?.featuredCollection} />
+
+      {/* =====================================
+          04 — EXPLORE MATERIAL UNIVERSES
+         ===================================== */}
+
+      <div id="piezas" className="scroll-mt-28">
+        <ExploreMaterials categories={categories} />
+      </div>
+
+      {/* =====================================
+          05 — CURATED PRODUCT SHOWCASES
+         ===================================== */}
+
       {carousels.map((carousel, index) => (
         <section
-          key={index}
-          id={`vitrina-${index}`}
-          className="py-16 scroll-mt-24"
+          key={`${carousel.key}-${index}`}
+          aria-labelledby={`showcase-title-${index}`}
+          className="
+      py-16
+      md:py-24
+    "
         >
-          <Container>
-            <FadeIn>
-              <div className="flex flex-col items-center mb-16">
-                <h3 className="font-brand text-2xl md:text-3xl tracking-[0.15em] text-coal uppercase">
-                  {carousel.categoryName}
-                </h3>
-                <div className="w-12 h-[1px] bg-coal/20 mt-6"></div>
-              </div>
-            </FadeIn>
-          </Container>
-
-          <Carousel>
-            {carousel.selectedProducts.map((product) => (
-              <div
-                key={product._id}
-                className="min-w-[65vw] md:min-w-[28vw] lg:min-w-[18vw] snap-center group/card"
-              >
-                <Link
-                  href={`/product/${product.slug.current}`}
-                  className="flex flex-col items-center text-center cursor-pointer"
-                >
-                  <div className="relative w-full aspect-[3/4] overflow-hidden bg-transparent mb-8">
-                    {product.mainImage && (
-                      <Image
-                        src={urlFor(product.mainImage)
-                          .width(800)
-                          .height(1066)
-                          .url()}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
-                        className="object-cover transition-transform duration-1000 group-hover/card:scale-105"
-                      />
-                    )}
-                  </div>
-
-                  <h4 className="text-xl font-brand text-coal mb-2">
-                    {product.name}
-                  </h4>
-                  <p className="text-sm font-editorial italic text-coal/70 mb-4 line-clamp-1 px-4">
-                    {product.purpose || product.description}
-                  </p>
-
-                  <span className="text-[10px] text-coal/90 font-semibold uppercase tracking-widest border-b border-transparent group-hover/card:text-terracotta group-hover/card:border-terracotta transition-colors duration-300 pb-0.5">
-                    Ver pieza
-                  </span>
-                </Link>
-              </div>
+          <Carousel
+            title={carousel.categoryName}
+            headingId={`showcase-title-${index}`}
+            eyebrow="Selección de SMHC"
+            categoryHref={`/catalogo/${encodeURIComponent(
+              carousel.categorySlug,
+            )}`}
+          >
+            {carousel.products.map((product) => (
+              <ProductCard key={product._id} product={product} />
             ))}
-
-            {/* Tarjeta de "Ver Toda la Colección" dinámica */}
-            <div className="min-w-[65vw] md:min-w-[28vw] lg:min-w-[18vw] snap-center flex items-center justify-center border border-coal/10 hover:bg-coal group/link transition-colors duration-500 cursor-pointer">
-              <Link
-                href={`/coleccion/${carousel.categorySlug}`}
-                className="w-full h-full flex flex-col items-center justify-center py-28"
-              >
-                <div className="w-8 h-[1px] bg-coal group-hover/link:bg-cream mb-4 transition-colors"></div>
-                <span className="text-[10px] md:text-xs font-system uppercase tracking-widest font-semibold text-coal group-hover/link:text-cream transition-colors px-4 text-center">
-                  Descubrir más
-                </span>
-              </Link>
-            </div>
           </Carousel>
         </section>
       ))}
 
-      {/* 4. BODEGÓN HÍBRIDO: CERA AROMÁTICA */}
-      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
-        <FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 md:px-0 order-2 md:order-1">
-              <span className="text-terracotta text-xs font-system font-bold uppercase tracking-[0.3em] mb-4 block">
-                Próximamente
+      {/* =====================================
+          06 — EDITORIAL CONTACT CTA
+         ===================================== */}
+
+      <section
+        aria-labelledby="home-contact-title"
+        className="px-6 py-20 md:py-28"
+      >
+        <Container>
+          <FadeIn>
+            <div className="mx-auto max-w-4xl border-y border-coal/15 py-16 text-center md:py-20">
+              <span className="font-system text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">
+                Hablemos
               </span>
-              <h3 className="font-brand text-4xl md:text-5xl text-coal mb-6">
-                Cera Aromática
-              </h3>
-              <p className="font-editorial text-lg text-coal/60 italic mb-10 max-w-md leading-relaxed">
-                Luz y esencia en perfecta armonía. Una colección diseñada para
-                encenderse, iluminar tus momentos y liberar notas olfativas
-                intensas que transforman la atmósfera de tu hogar.
+
+              <h2
+                id="home-contact-title"
+                className="mx-auto mt-7 max-w-2xl font-brand text-[clamp(2rem,3.8vw,3.8rem)] leading-[1.2] text-coal text-balance"
+              >
+                Hay piezas que hacen especial un espacio.
+              </h2>
+
+              <p className="mx-auto mt-7 max-w-xl font-editorial text-base leading-8 text-coal/70 md:text-lg">
+                ¿Tienes una pregunta sobre nuestras creaciones? Nos encantará
+                conocerla.
               </p>
 
               <Link
                 href="/contacto"
-                className="text-[10px] font-system uppercase tracking-widest border-b border-coal pb-1 hover:text-terracotta hover:border-terracotta transition-colors"
+                className="group mt-10 inline-flex min-h-13 items-center justify-center gap-5 bg-coal px-8 py-4 font-system text-[10px] font-semibold uppercase tracking-[0.17em] text-cream transition-colors duration-300 hover:bg-terracotta"
               >
-                Recibir notificación
+                Contactar a SMHC
+                <ArrowUpRight
+                  aria-hidden="true"
+                  size={17}
+                  strokeWidth={1.5}
+                  className="transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
+                />
               </Link>
             </div>
-
-            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5 order-1 md:order-2">
-              <Image
-                src="https://images.pexels.com/photos/7004676/pexels-photo-7004676.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                alt="Colección Cera Aromática"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </FadeIn>
-      </section>
-
-      {/* 5. BODEGÓN HÍBRIDO: PIEDRA ESCULTURAL */}
-      <section className="py-24 px-6 md:px-12 max-w-[85rem] mx-auto mt-10">
-        <FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="relative w-full aspect-[4/5] overflow-hidden bg-coal/5">
-              <Image
-                src="https://images.pexels.com/photos/4207788/pexels-photo-4207788.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                alt="Ambiente Stephany Manzano"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col items-center md:items-start text-center md:text-left px-4 md:px-0">
-              <span className="text-terracotta text-xs font-system font-bold uppercase tracking-[0.3em] mb-4 block">
-                Próximamente
-              </span>
-              <h3 className="font-brand text-4xl md:text-5xl text-coal mb-6">
-                Piedra Escultural
-              </h3>
-              <p className="font-editorial text-lg text-coal/60 italic mb-10 max-w-md leading-relaxed">
-                La solidez de los minerales transformada en siluetas suaves y
-                atemporales. Macetas esculturales creadas para albergar vida con
-                la más pura elegancia.
-              </p>
-
-              <Link
-                href="/contacto"
-                className="text-[10px] font-system uppercase tracking-widest border-b border-coal pb-1 hover:text-terracotta hover:border-terracotta transition-colors"
-              >
-                Recibir notificación
-              </Link>
-            </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </Container>
       </section>
     </main>
   );
