@@ -7,6 +7,8 @@ import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
 import { ArrowDown, ArrowLeft } from "lucide-react";
 
+import { MediaReveal } from "@/components/motion/MediaReveal";
+
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { FadeIn } from "@/components/motion/FadeIn";
@@ -155,7 +157,11 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             </FadeIn>
           </div>
 
-          <div className="relative min-h-100 overflow-hidden bg-coal/10 sm:min-h-137.5 lg:min-h-162.5">
+          <MediaReveal
+            delay={0.12}
+            duration={1.05}
+            className="relative min-h-100 overflow-hidden bg-coal/10 sm:min-h-137.5 lg:min-h-162.5"
+          >
             {hasImage && collection.coverImage ? (
               <Image
                 src={urlFor(collection.coverImage)
@@ -184,7 +190,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
                 />
               </div>
             )}
-          </div>
+          </MediaReveal>
         </div>
       </section>
 

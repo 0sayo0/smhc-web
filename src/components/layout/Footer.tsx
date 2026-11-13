@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { ArrowUpRight } from "lucide-react";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+
 import { Container } from "@/components/layout/Container";
 
 export function Footer() {
@@ -13,7 +15,12 @@ export function Footer() {
             MAIN FOOTER
            ===================================== */}
 
-        <div className="grid grid-cols-1 gap-16 border-b border-cream/15 pb-20 lg:grid-cols-[1.4fr_1fr] lg:gap-24">
+        <FadeIn
+          direction="up"
+          duration={0.8}
+          distance={16}
+          className="grid grid-cols-1 gap-16 border-b border-cream/15 pb-20 lg:grid-cols-[1.4fr_1fr] lg:gap-24"
+        >
           {/* BRAND IDENTITY */}
 
           <div className="flex flex-col items-start">
@@ -106,7 +113,7 @@ export function Footer() {
               </Link>
             </div>
           </div>
-        </div>
+        </FadeIn>
 
         {/* =====================================
             FOOTER SIGNATURE

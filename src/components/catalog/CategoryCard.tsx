@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { ArrowUpRight } from "lucide-react";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+
 import { urlFor } from "@/lib/sanity";
 
 import type { CatalogCategory } from "@/lib/catalog";
@@ -17,32 +19,38 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
   const hasImage = Boolean(category.coverImage?.asset);
 
   return (
-    <Link href={href} className="group block">
-      {/* EDITORIAL IMAGE AREA */}
+    <FadeIn
+      className="h-full"
+      delay={Math.min(index * 0.1, 0.3)}
+      duration={0.75}
+      distance={22}
+    >
+      <Link href={href} className="group block h-full">
+        {/* EDITORIAL IMAGE AREA */}
 
-      <div
-        className="
+        <div
+          className="
           relative
           aspect-[4/4.5]
           overflow-hidden
           bg-warm
         "
-      >
-        {hasImage && category.coverImage ? (
-          <Image
-            src={urlFor(category.coverImage)
-              .width(1200)
-              .quality(85)
-              .auto("format")
-              .url()}
-            alt={category.coverImage.alt || category.name}
-            fill
-            sizes="
+        >
+          {hasImage && category.coverImage ? (
+            <Image
+              src={urlFor(category.coverImage)
+                .width(1200)
+                .quality(85)
+                .auto("format")
+                .url()}
+              alt={category.coverImage.alt || category.name}
+              fill
+              sizes="
               (max-width: 767px) 100vw,
               (max-width: 1279px) 50vw,
               33vw
             "
-            className="
+              className="
               object-cover
 
               transition-transform
@@ -51,10 +59,10 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
               motion-safe:group-hover:scale-[1.045]
             "
-          />
-        ) : (
-          <div
-            className="
+            />
+          ) : (
+            <div
+              className="
               absolute inset-0
 
               flex flex-col
@@ -64,21 +72,21 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
               px-8 text-center
             "
-          >
-            <span
-              className="
+            >
+              <span
+                className="
                 font-editorial
                 text-[11px]
                 italic
 
                 text-terracotta
               "
-            >
-              Stephany Manzano
-            </span>
+              >
+                Stephany Manzano
+              </span>
 
-            <span
-              className="
+              <span
+                className="
                 mt-7
 
                 font-brand
@@ -87,25 +95,25 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
                 text-coal
               "
-            >
-              {category.name}
-            </span>
+              >
+                {category.name}
+              </span>
 
-            <span
-              aria-hidden="true"
-              className="
+              <span
+                aria-hidden="true"
+                className="
                 mt-9
                 h-px w-12
                 bg-terracotta
               "
-            />
-          </div>
-        )}
+              />
+            </div>
+          )}
 
-        {/* CATEGORY INDEX */}
+          {/* CATEGORY INDEX */}
 
-        <div
-          className="
+          <div
+            className="
             absolute
             left-6
             top-6
@@ -114,24 +122,24 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
             px-4
             py-3
           "
-        >
-          <span
-            className="
+          >
+            <span
+              className="
               font-system
               text-[10px]
               tracking-[0.15em]
 
               text-coal
             "
-          >
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+          </div>
 
-        {/* ARROW */}
+          {/* ARROW */}
 
-        <div
-          className="
+          <div
+            className="
             absolute
             right-6
             bottom-6
@@ -150,27 +158,27 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
             group-hover:bg-coal
             group-hover:text-cream
           "
-        >
-          <ArrowUpRight
-            aria-hidden="true"
-            size={20}
-            strokeWidth={1.5}
-            className="
+          >
+            <ArrowUpRight
+              aria-hidden="true"
+              size={20}
+              strokeWidth={1.5}
+              className="
               transition-transform
               duration-300
 
               motion-safe:group-hover:-translate-y-0.5
               motion-safe:group-hover:translate-x-0.5
             "
-          />
+            />
+          </div>
         </div>
-      </div>
 
-      {/* CATEGORY INFORMATION */}
+        {/* CATEGORY INFORMATION */}
 
-      <div className="pt-7">
-        <span
-          className="
+        <div className="pt-7">
+          <span
+            className="
             font-system
             text-[10px]
             font-semibold
@@ -179,12 +187,12 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
             text-terracotta
           "
-        >
-          Home Collection
-        </span>
+          >
+            Home Collection
+          </span>
 
-        <h3
-          className="
+          <h3
+            className="
             mt-3
 
             font-brand
@@ -198,13 +206,13 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
             group-hover:text-terracotta
           "
-        >
-          {category.name}
-        </h3>
+          >
+            {category.name}
+          </h3>
 
-        {category.description && (
-          <p
-            className="
+          {category.description && (
+            <p
+              className="
               mt-4
               max-w-md
 
@@ -214,11 +222,12 @@ export function CategoryCard({ category, href, index }: CategoryCardProps) {
 
               text-coal/65
             "
-          >
-            {category.description}
-          </p>
-        )}
-      </div>
-    </Link>
+            >
+              {category.description}
+            </p>
+          )}
+        </div>
+      </Link>
+    </FadeIn>
   );
 }

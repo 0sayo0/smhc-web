@@ -6,6 +6,8 @@ import Image from "next/image";
 
 import { ChevronLeft, ChevronRight, Expand, X } from "lucide-react";
 
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+
 // ========================================
 // TYPES
 // ========================================
@@ -27,6 +29,8 @@ interface ProductGalleryProps {
 
 export function ProductGallery({ productName, images }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const shouldReduceMotion = useReducedMotion();
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -83,14 +87,33 @@ export function ProductGallery({ productName, images }: ProductGalleryProps) {
          ===================================== */}
 
       <div className="relative aspect-[4/5] overflow-hidden bg-warm">
-        <Image
-          key={activeImage.src}
-          src={activeImage.src}
-          alt={activeImage.alt}
-          fill
-          sizes="(max-width: 1023px) 100vw, 52vw"
-          className="object-cover"
-        />
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={activeImage.src}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            transition={{
+              duration: shouldReduceMotion ? 0 : 0.28,
+              ease: "easeInOut",
+            }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={activeImage.src}
+              alt={activeImage.alt}
+              fill
+              sizes="(max-width: 1023px) 100vw, 52vw"
+              className="object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
 
         {/* IMAGE INDEX */}
 

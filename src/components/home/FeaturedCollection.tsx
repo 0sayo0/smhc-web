@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { ArrowUpRight, MoveUpRight } from "lucide-react";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+
 import { Container } from "@/components/layout/Container";
 
 import { urlFor } from "@/lib/sanity";
@@ -94,7 +96,9 @@ export function FeaturedCollection({ config }: FeaturedCollectionProps) {
             EDITORIAL SECTION HEADER
            ===================================== */}
 
-        <div
+        <FadeIn
+          direction="up"
+          duration={0.7}
           className="
             mb-10
 
@@ -187,13 +191,16 @@ export function FeaturedCollection({ config }: FeaturedCollectionProps) {
               "
             />
           </Link>
-        </div>
+        </FadeIn>
 
         {/* =====================================
             IMMERSIVE COLLECTION FEATURE
            ===================================== */}
 
-        <div
+        <FadeIn
+          direction="none"
+          duration={0.95}
+          delay={0.1}
           className={`
             relative
             isolate
@@ -412,7 +419,7 @@ export function FeaturedCollection({ config }: FeaturedCollectionProps) {
               />
             </Link>
           </div>
-        </div>
+        </FadeIn>
 
         {/* =====================================
             EDITORIAL FOOTNOTE

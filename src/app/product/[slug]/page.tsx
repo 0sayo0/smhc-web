@@ -8,6 +8,8 @@ import { notFound } from "next/navigation";
 
 import { ArrowLeft, ArrowUpRight, MessageCircle } from "lucide-react";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+
 import { Container } from "@/components/layout/Container";
 
 import {
@@ -266,13 +268,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="grid grid-cols-1 gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-20">
           {/* LEFT — EDITORIAL GALLERY */}
 
-          <div className="min-w-0">
+          <FadeIn
+            direction="left"
+            duration={0.85}
+            distance={20}
+            className="min-w-0"
+          >
             <ProductGallery productName={product.name} images={galleryImages} />
-          </div>
+          </FadeIn>
 
           {/* RIGHT — PRODUCT IDENTITY */}
 
-          <div className="flex min-w-0 flex-col lg:pt-6">
+          <FadeIn
+            direction="right"
+            delay={0.1}
+            duration={0.85}
+            distance={20}
+            className="flex min-w-0 flex-col lg:pt-6"
+          >
             {/* EYEBROW */}
 
             <span className="font-system text-[10px] font-semibold uppercase tracking-[0.25em] text-terracotta">
@@ -402,7 +415,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.5} />
               Volver a {category?.name || "catálogo"}
             </Link>
-          </div>
+          </FadeIn>
         </div>
 
         {/* =====================================

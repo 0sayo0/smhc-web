@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tenor_Sans, Lora, Montserrat } from "next/font/google";
 import "./globals.css";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Ajusta la ruta si es necesario
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -88,11 +89,12 @@ export default async function RootLayout({
       className={`${tenor.variable} ${lora.variable} ${montserrat.variable}`}
     >
       <body className="relative">
-        {/* ACCESSIBILITY — SKIP LINK */}
+        <MotionProvider>
+          {/* ACCESSIBILITY — SKIP LINK */}
 
-        <a
-          href="#contenido"
-          className="
+          <a
+            href="#contenido"
+            className="
             sr-only
 
             fixed
@@ -110,27 +112,28 @@ export default async function RootLayout({
 
             focus:not-sr-only
           "
-        >
-          Saltar al contenido principal
-        </a>
+          >
+            Saltar al contenido principal
+          </a>
 
-        {/* GLOBAL NAVIGATION */}
+          {/* GLOBAL NAVIGATION */}
 
-        <Navbar categories={categories} />
+          <Navbar categories={categories} />
 
-        {/* PAGE CONTENT */}
+          {/* PAGE CONTENT */}
 
-        <div id="contenido" tabIndex={-1} className="scroll-mt-24">
-          {children}
-        </div>
+          <div id="contenido" tabIndex={-1} className="scroll-mt-24">
+            {children}
+          </div>
 
-        {/* GLOBAL FOOTER */}
+          {/* GLOBAL FOOTER */}
 
-        <Footer />
+          <Footer />
 
-        {/* CUSTOMER CONTACT */}
+          {/* CUSTOMER CONTACT */}
 
-        <WhatsAppButton />
+          <WhatsAppButton />
+        </MotionProvider>
       </body>
     </html>
   );

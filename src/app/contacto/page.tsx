@@ -100,71 +100,38 @@ export default async function ContactoPage() {
         <section aria-label="Canales de contacto" className="mt-20 md:mt-28">
           <div className="grid grid-cols-1 gap-px bg-coal/10 md:grid-cols-2">
             {/* WHATSAPP */}
+            <FadeIn
+              direction="up"
+              duration={0.75}
+              distance={20}
+              className="h-full"
+            >
+              <div className="flex min-h-[400px] flex-col items-start bg-warm p-9 sm:p-12 lg:p-16">
+                <span className="font-system text-[10px] font-semibold uppercase tracking-[0.2em] text-terracotta">
+                  01 / Atención directa
+                </span>
 
-            <div className="flex min-h-[400px] flex-col items-start bg-warm p-9 sm:p-12 lg:p-16">
-              <span className="font-system text-[10px] font-semibold uppercase tracking-[0.2em] text-terracotta">
-                01 / Atención directa
-              </span>
-
-              <MessageCircle
-                aria-hidden="true"
-                size={31}
-                strokeWidth={1.2}
-                className="mt-12 text-coal"
-              />
-
-              <h2 className="mt-8 font-brand text-3xl text-coal">WhatsApp</h2>
-
-              <p className="mt-6 max-w-sm font-editorial text-base leading-8 text-coal/70">
-                Escríbenos para conocer más sobre nuestras piezas y resolver tus
-                dudas de manera personalizada.
-              </p>
-
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group mt-auto inline-flex min-h-13 items-center gap-4 border-b border-coal/35 pb-2 pt-10 font-system text-[10px] font-semibold uppercase tracking-[0.17em] text-coal transition-colors duration-300 hover:border-terracotta hover:text-terracotta"
-              >
-                Iniciar conversación
-                <ArrowUpRight
+                <MessageCircle
                   aria-hidden="true"
-                  size={17}
-                  strokeWidth={1.5}
-                  className="transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
+                  size={31}
+                  strokeWidth={1.2}
+                  className="mt-12 text-coal"
                 />
-              </a>
-            </div>
 
-            {/* INSTAGRAM / BRAND CONNECTION */}
+                <h2 className="mt-8 font-brand text-3xl text-coal">WhatsApp</h2>
 
-            <div className="flex min-h-[400px] flex-col items-start bg-soft p-9 sm:p-12 lg:p-16">
-              <span className="font-system text-[10px] font-semibold uppercase tracking-[0.2em] text-terracotta">
-                02 / Nuestro universo
-              </span>
+                <p className="mt-6 max-w-sm font-editorial text-base leading-8 text-coal/70">
+                  Escríbenos para conocer más sobre nuestras piezas y resolver
+                  tus dudas de manera personalizada.
+                </p>
 
-              <Instagram
-                aria-hidden="true"
-                size={31}
-                strokeWidth={1.2}
-                className="mt-12 text-coal"
-              />
-
-              <h2 className="mt-8 font-brand text-3xl text-coal">Instagram</h2>
-
-              <p className="mt-6 max-w-sm font-editorial text-base leading-8 text-coal/70">
-                Descubre nuestras creaciones, novedades y fotografías de las
-                piezas que forman parte de SMHC.
-              </p>
-
-              {instagramUrl ? (
                 <a
-                  href={instagramUrl}
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group mt-auto inline-flex min-h-13 items-center gap-4 border-b border-coal/35 pb-2 pt-10 font-system text-[10px] font-semibold uppercase tracking-[0.17em] text-coal transition-colors duration-300 hover:border-terracotta hover:text-terracotta"
                 >
-                  Visitar Instagram
+                  Iniciar conversación
                   <ArrowUpRight
                     aria-hidden="true"
                     size={17}
@@ -172,12 +139,60 @@ export default async function ContactoPage() {
                     className="transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
                   />
                 </a>
-              ) : (
-                <span className="mt-auto pt-10 font-editorial text-sm italic text-coal/55">
-                  Explora nuestras creaciones en el catálogo.
+              </div>
+            </FadeIn>
+
+            {/* INSTAGRAM / BRAND CONNECTION */}
+            <FadeIn
+              direction="up"
+              delay={0.12}
+              duration={0.75}
+              distance={20}
+              className="h-full"
+            >
+              <div className="flex min-h-[400px] flex-col items-start bg-soft p-9 sm:p-12 lg:p-16">
+                <span className="font-system text-[10px] font-semibold uppercase tracking-[0.2em] text-terracotta">
+                  02 / Nuestro universo
                 </span>
-              )}
-            </div>
+
+                <Instagram
+                  aria-hidden="true"
+                  size={31}
+                  strokeWidth={1.2}
+                  className="mt-12 text-coal"
+                />
+
+                <h2 className="mt-8 font-brand text-3xl text-coal">
+                  Instagram
+                </h2>
+
+                <p className="mt-6 max-w-sm font-editorial text-base leading-8 text-coal/70">
+                  Descubre nuestras creaciones, novedades y fotografías de las
+                  piezas que forman parte de SMHC.
+                </p>
+
+                {instagramUrl ? (
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group mt-auto inline-flex min-h-13 items-center gap-4 border-b border-coal/35 pb-2 pt-10 font-system text-[10px] font-semibold uppercase tracking-[0.17em] text-coal transition-colors duration-300 hover:border-terracotta hover:text-terracotta"
+                  >
+                    Visitar Instagram
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      size={17}
+                      strokeWidth={1.5}
+                      className="transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
+                    />
+                  </a>
+                ) : (
+                  <span className="mt-auto pt-10 font-editorial text-sm italic text-coal/55">
+                    Explora nuestras creaciones en el catálogo.
+                  </span>
+                )}
+              </div>
+            </FadeIn>
           </div>
         </section>
 

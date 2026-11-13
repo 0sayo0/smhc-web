@@ -7,6 +7,9 @@ import { notFound } from "next/navigation";
 
 import { ArrowLeft } from "lucide-react";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+import { MediaReveal } from "@/components/motion/MediaReveal";
+
 import { Container } from "@/components/layout/Container";
 
 import { CategoryCard } from "@/components/catalog/CategoryCard";
@@ -199,15 +202,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               lg:gap-20
             "
           >
-            <div
-              className="
+            <FadeIn direction="left" duration={0.8}>
+              <div
+                className="
                 flex
                 flex-col
                 items-start
               "
-            >
-              <span
-                className="
+              >
+                <span
+                  className="
                   font-system
                   text-[10px]
                   font-semibold
@@ -216,12 +220,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
                   text-terracotta
                 "
-              >
-                {isSubcategory ? "Universo artesanal" : "Colección de hogar"}
-              </span>
+                >
+                  {isSubcategory ? "Universo artesanal" : "Colección de hogar"}
+                </span>
 
-              <h1
-                className="
+                <h1
+                  className="
                   mt-7
 
                   font-brand
@@ -233,23 +237,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   text-coal
                   text-balance
                 "
-              >
-                {category.name}
-              </h1>
+                >
+                  {category.name}
+                </h1>
 
-              <div
-                aria-hidden="true"
-                className="
+                <div
+                  aria-hidden="true"
+                  className="
                   mt-8
                   h-px
                   w-14
                   bg-terracotta
                 "
-              />
+                />
 
-              {category.description && (
-                <p
-                  className="
+                {category.description && (
+                  <p
+                    className="
                     mt-8
 
                     max-w-lg
@@ -262,14 +266,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
                     text-coal/70
                   "
-                >
-                  {category.description}
-                </p>
-              )}
+                  >
+                    {category.description}
+                  </p>
+                )}
 
-              <Link
-                href="/catalogo"
-                className="
+                <Link
+                  href="/catalogo"
+                  className="
                   group
 
                   mt-10
@@ -294,16 +298,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   transition-colors
                   hover:text-terracotta
                 "
-              >
-                <ArrowLeft aria-hidden="true" size={15} strokeWidth={1.5} />
-                Explorar catálogo
-              </Link>
-            </div>
+                >
+                  <ArrowLeft aria-hidden="true" size={15} strokeWidth={1.5} />
+                  Explorar catálogo
+                </Link>
+              </div>
+            </FadeIn>
 
             {/* CATEGORY IMAGE */}
 
             {hasCoverImage && category.coverImage && (
-              <div
+              <MediaReveal
                 className="
                     relative
                     aspect-5/4
@@ -326,7 +331,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                     "
                   className="object-cover"
                 />
-              </div>
+              </MediaReveal>
             )}
           </div>
         </Container>

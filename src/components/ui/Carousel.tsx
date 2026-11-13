@@ -351,6 +351,8 @@ export function Carousel({
                 transition-colors
                 duration-300
 
+                smhc-press
+
                 hover:border-terracotta
                 hover:text-terracotta
               "
@@ -431,6 +433,8 @@ export function Carousel({
 
                       transition-[background-color,color,border-color]
                       duration-300
+
+                      smhc-press
 
                       hover:border-coal
                       hover:bg-coal

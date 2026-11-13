@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { FadeIn } from "@/components/motion/FadeIn";
+
 import { Container } from "@/components/layout/Container";
 
 import { CategoryCard } from "@/components/catalog/CategoryCard";
@@ -34,18 +36,18 @@ export default async function CatalogPage() {
     >
       <Container>
         {/* EDITORIAL INTRO */}
-
-        <header
-          className="
+        <FadeIn direction="up" duration={0.75}>
+          <header
+            className="
             mx-auto
 
             max-w-4xl
 
             text-center
           "
-        >
-          <span
-            className="
+          >
+            <span
+              className="
               font-system
               text-[10px]
               font-semibold
@@ -54,12 +56,12 @@ export default async function CatalogPage() {
 
               text-terracotta
             "
-          >
-            El universo SMHC
-          </span>
+            >
+              El universo SMHC
+            </span>
 
-          <h1
-            className="
+            <h1
+              className="
               mt-8
 
               font-brand
@@ -71,14 +73,14 @@ export default async function CatalogPage() {
               text-coal
               text-balance
             "
-          >
-            Objetos que transforman
-            <br className="hidden md:block" /> la forma de habitar.
-          </h1>
+            >
+              Objetos que transforman
+              <br className="hidden md:block" /> la forma de habitar.
+            </h1>
 
-          <div
-            aria-hidden="true"
-            className="
+            <div
+              aria-hidden="true"
+              className="
               mx-auto
               mt-9
 
@@ -87,10 +89,10 @@ export default async function CatalogPage() {
 
               bg-terracotta
             "
-          />
+            />
 
-          <p
-            className="
+            <p
+              className="
               mx-auto
               mt-9
 
@@ -104,11 +106,12 @@ export default async function CatalogPage() {
 
               text-coal/65
             "
-          >
-            Una exploración de materiales, formas y sensibilidad artesanal.
-            Piezas creadas con intención para acompañar tus espacios.
-          </p>
-        </header>
+            >
+              Una exploración de materiales, formas y sensibilidad artesanal.
+              Piezas creadas con intención para acompañar tus espacios.
+            </p>
+          </header>
+        </FadeIn>
 
         {/* CATEGORIES */}
 

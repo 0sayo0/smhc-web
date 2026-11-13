@@ -176,3 +176,21 @@
     transform: none !important;
   }
 }
+
+/* ========================================
+   SMHC — PREMIUM MICROINTERACTIONS
+   ======================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .smhc-press {
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 300ms ease,
+      color 300ms ease,
+      border-color 300ms ease;
+  }
+
+  .smhc-press:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}

@@ -7,6 +7,8 @@ import { PortableText } from "@portabletext/react";
 
 import { ArrowUpRight } from "lucide-react";
 
+import { MediaReveal } from "@/components/motion/MediaReveal";
+
 import { Container } from "@/components/layout/Container";
 import { FadeIn } from "@/components/motion/FadeIn";
 
@@ -100,7 +102,10 @@ export default async function NosotrosPage() {
 
             {/* RIGHT — INSTITUTIONAL PHOTOGRAPH */}
 
-            <div className="relative aspect-[4/5] overflow-hidden bg-warm">
+            <MediaReveal
+              delay={0.15}
+              className="relative aspect-[4/5] overflow-hidden bg-warm"
+            >
               {hasPortrait && portrait ? (
                 <Image
                   src={urlFor(portrait)
@@ -136,7 +141,7 @@ export default async function NosotrosPage() {
                   </p>
                 </div>
               )}
-            </div>
+            </MediaReveal>
           </div>
         </Container>
       </section>
@@ -178,7 +183,10 @@ export default async function NosotrosPage() {
         <section className={hasStory ? "pb-28" : "py-28"}>
           <Container>
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
-              <div className="relative aspect-[5/4] overflow-hidden bg-warm">
+              <MediaReveal
+                duration={1.1}
+                className="relative aspect-[5/4] overflow-hidden bg-warm"
+              >
                 <Image
                   src={urlFor(processImage)
                     .width(1400)
@@ -192,7 +200,7 @@ export default async function NosotrosPage() {
                   sizes="(max-width: 1023px) 100vw, 50vw"
                   className="object-cover"
                 />
-              </div>
+              </MediaReveal>
 
               <FadeIn>
                 <span className="font-system text-[10px] font-semibold uppercase tracking-[0.25em] text-terracotta">

@@ -36,6 +36,8 @@ export function WhatsAppButton() {
         transition-[background-color,transform]
         duration-300
 
+        smhc-press
+
         hover:bg-terracotta
 
         motion-safe:hover:-translate-y-1
