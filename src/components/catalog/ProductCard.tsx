@@ -7,22 +7,47 @@ import { urlFor } from "@/lib/sanity";
 
 import type { CatalogProduct } from "@/lib/catalog";
 
+// ========================================
+// TYPES
+// ========================================
+
 interface ProductCardProps {
   product: CatalogProduct;
 }
 
+// ========================================
+// COMPONENT
+// ========================================
+
 export function ProductCard({ product }: ProductCardProps) {
   const hasImage = Boolean(product.mainImage?.asset);
 
+  const href = `/product/${encodeURIComponent(product.slug)}`;
+
   return (
-    <article className="group">
-      <Link href={`/product/${product.slug}`} className="block">
-        {/* IMAGE */}
+    <article className="group h-full">
+      <Link
+        href={href}
+        className="
+          flex
+          h-full
+          flex-col
+
+          focus-visible:outline-2
+          focus-visible:outline-offset-4
+          focus-visible:outline-terracotta
+        "
+      >
+        {/* =====================================
+            PRODUCT PHOTOGRAPHY
+           ===================================== */}
 
         <div
           className="
             relative
-            aspect-3/4
+
+            aspect-[4/5]
+
             overflow-hidden
 
             bg-warm
@@ -30,11 +55,16 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           {hasImage && product.mainImage ? (
             <Image
-              src={urlFor(product.mainImage).width(900).height(1200).url()}
+              src={urlFor(product.mainImage)
+                .width(960)
+                .height(1200)
+                .fit("crop")
+                .auto("format")
+                .url()}
               alt={product.mainImage.alt || product.name}
               fill
               sizes="
-                (max-width: 639px) 100vw,
+                (max-width: 639px) 85vw,
                 (max-width: 1023px) 50vw,
                 33vw
               "
@@ -43,21 +73,25 @@ export function ProductCard({ product }: ProductCardProps) {
 
                 transition-transform
                 duration-1000
+
                 ease-out
 
-                motion-safe:group-hover:scale-105
+                motion-safe:group-hover:scale-[1.045]
               "
             />
           ) : (
             <div
               className="
-                absolute inset-0
+                absolute
+                inset-0
 
                 flex
                 items-center
                 justify-center
 
-                p-8
+                bg-warm
+
+                px-8
                 text-center
               "
             >
@@ -67,73 +101,88 @@ export function ProductCard({ product }: ProductCardProps) {
                   text-sm
                   italic
 
-                  text-coal/45
+                  text-coal/50
                 "
               >
                 Fotografía próximamente
               </span>
             </div>
           )}
+        </div>
 
-          {/* CATEGORY LABEL */}
+        {/* =====================================
+            PRODUCT INFORMATION
+           ===================================== */}
 
-          {product.categoryName && (
-            <div
-              className="
-                absolute
-                left-4
-                top-4
+        <div
+          className="
+            flex
+            flex-1
+            flex-col
 
-                bg-cream/95
+            pt-6
+          "
+        >
+          {/* CATEGORY / COLLECTION */}
 
-                px-4
-                py-3
-              "
-            >
+          <div
+            className="
+              flex
+              flex-wrap
+              items-center
+
+              gap-x-3
+              gap-y-2
+            "
+          >
+            {product.collectionName && (
               <span
                 className="
                   font-system
                   text-[9px]
                   font-semibold
                   uppercase
-                  tracking-[0.15em]
+                  tracking-[0.17em]
 
-                  text-coal
+                  text-terracotta
                 "
               >
+                {product.collectionName}
+              </span>
+            )}
+
+            {product.categoryName && (
+              <span
+                className="
+                  font-system
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.12em]
+
+                  text-coal/50
+                "
+              >
+                {product.collectionName && (
+                  <span aria-hidden="true" className="mr-3">
+                    /
+                  </span>
+                )}
+
                 {product.categoryName}
               </span>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* INFORMATION */}
-
-        <div className="pt-6">
-          {product.collectionName && (
-            <span
-              className="
-                font-system
-                text-[10px]
-                font-medium
-                uppercase
-                tracking-[0.18em]
-
-                text-terracotta
-              "
-            >
-              {product.collectionName}
-            </span>
-          )}
+          {/* PRODUCT NAME */}
 
           <h3
             className="
-              mt-3
+              mt-4
 
               font-brand
-              text-xl
-              md:text-2xl
 
+              text-xl
               leading-snug
 
               text-coal
@@ -142,10 +191,14 @@ export function ProductCard({ product }: ProductCardProps) {
               duration-300
 
               group-hover:text-terracotta
+
+              md:text-2xl
             "
           >
             {product.name}
           </h3>
+
+          {/* PRODUCT DESCRIPTION */}
 
           {(product.purpose || product.description) && (
             <p
@@ -157,7 +210,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 font-editorial
                 text-sm
                 italic
-                leading-6
+                leading-7
 
                 text-coal/65
               "
@@ -166,16 +219,21 @@ export function ProductCard({ product }: ProductCardProps) {
             </p>
           )}
 
+          {/* EDITORIAL LINK */}
+
           <span
             className="
-              mt-6
+              mt-auto
+              pt-7
 
               inline-flex
               items-center
               gap-3
 
+              self-start
+
               border-b
-              border-coal/25
+              border-coal/30
 
               pb-2
 
@@ -183,7 +241,7 @@ export function ProductCard({ product }: ProductCardProps) {
               text-[10px]
               font-semibold
               uppercase
-              tracking-[0.15em]
+              tracking-[0.16em]
 
               text-coal
 
@@ -195,7 +253,18 @@ export function ProductCard({ product }: ProductCardProps) {
             "
           >
             Descubrir pieza
-            <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.5} />
+            <ArrowUpRight
+              aria-hidden="true"
+              size={16}
+              strokeWidth={1.5}
+              className="
+                transition-transform
+                duration-300
+
+                motion-safe:group-hover:-translate-y-0.5
+                motion-safe:group-hover:translate-x-0.5
+              "
+            />
           </span>
         </div>
       </Link>

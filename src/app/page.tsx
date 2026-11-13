@@ -211,68 +211,23 @@ export default async function Home() {
         <section
           key={`${carousel.key}-${index}`}
           aria-labelledby={`showcase-title-${index}`}
-          className="py-16 md:py-24"
+          className="
+      py-16
+      md:py-24
+    "
         >
-          <Container>
-            <FadeIn>
-              <div className="mb-14 flex flex-col gap-6 border-t border-coal/15 pt-10 md:flex-row md:items-end md:justify-between">
-                {/* SHOWCASE HEADING */}
-
-                <div>
-                  <span className="font-system text-[10px] font-semibold uppercase tracking-[0.25em] text-terracotta">
-                    Selección de SMHC
-                  </span>
-
-                  <h2
-                    id={`showcase-title-${index}`}
-                    className="mt-5 font-brand text-3xl leading-tight text-coal md:text-4xl"
-                  >
-                    {carousel.categoryName}
-                  </h2>
-                </div>
-
-                {/* CATEGORY LINK */}
-
-                <Link
-                  href={`/catalogo/${encodeURIComponent(
-                    carousel.categorySlug,
-                  )}`}
-                  className="group inline-flex items-center gap-3 self-start border-b border-coal/30 pb-2 font-system text-[10px] font-semibold uppercase tracking-[0.16em] text-coal transition-colors duration-300 hover:border-terracotta hover:text-terracotta"
-                >
-                  Explorar categoría
-                  <ArrowUpRight
-                    aria-hidden="true"
-                    size={16}
-                    strokeWidth={1.5}
-                    className="transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </div>
-            </FadeIn>
-          </Container>
-
-          {/* PRODUCT PRESENTATION */}
-
-          {carousel.products.length <= 2 ? (
-            <Container>
-              <div className="grid max-w-3xl grid-cols-1 gap-8 sm:grid-cols-2">
-                {carousel.products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
-            </Container>
-          ) : (
-            <Carousel>
-              {carousel.products.map((product) => (
-                <div
-                  key={product._id}
-                  className="w-[78vw] shrink-0 snap-start sm:w-[45vw] lg:w-[27vw] xl:w-[22rem]"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </Carousel>
-          )}
+          <Carousel
+            title={carousel.categoryName}
+            headingId={`showcase-title-${index}`}
+            eyebrow="Selección de SMHC"
+            categoryHref={`/catalogo/${encodeURIComponent(
+              carousel.categorySlug,
+            )}`}
+          >
+            {carousel.products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </Carousel>
         </section>
       ))}
 
