@@ -1,22 +1,52 @@
-import { MessageCircleMoreIcon } from "lucide-react";
-import Link from "next/link";
+import { MessageCircleMore } from "lucide-react";
+
+import { getWhatsappUrl } from "@/lib/whatsapp";
 
 export function WhatsAppButton() {
-  // Reemplaza con tu número real
-  const phoneNumber = "5214612771367";
-  const message = "Hola! Me interesa una pieza de la colección.";
-  const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = getWhatsappUrl(
+    "Hola, me gustaría conocer más sobre las piezas de Stephany Manzano Home Collection.",
+  );
 
   return (
-    <Link
-      href={waLink}
+    <a
+      href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-18 h-18 bg-coal text-cream rounded-full shadow-lg hover:bg-terracotta transition-all hover:scale-105 duration-300"
-      aria-label="Contactar por WhatsApp"
+      aria-label="Contactar a SMHC por WhatsApp"
+      className="
+        fixed
+        bottom-5
+        right-5
+        z-40
+
+        flex
+        h-14
+        w-14
+
+        items-center
+        justify-center
+
+        rounded-full
+
+        bg-coal
+        text-cream
+
+        shadow-[0_8px_30px_-12px_rgba(56,56,56,0.4)]
+
+        transition-[background-color,transform]
+        duration-300
+
+        hover:bg-terracotta
+
+        motion-safe:hover:-translate-y-1
+
+        sm:bottom-7
+        sm:right-7
+        sm:h-15
+        sm:w-15
+      "
     >
-      {/*WhatsApp icon*/}
-      <MessageCircleMoreIcon size={35} />
-    </Link>
+      <MessageCircleMore aria-hidden="true" size={28} strokeWidth={1.5} />
+    </a>
   );
 }
