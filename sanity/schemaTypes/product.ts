@@ -64,17 +64,57 @@ export const product = defineType({
     }),
 
     // --- Visual ---
+    // ========================================
+    // PRODUCT PHOTOGRAPHY
+    // ========================================
+
     defineField({
       name: 'mainImage',
-      title: 'Imagen Principal (Portada)',
+      title: 'Fotografía principal',
       type: 'image',
-      options: {hotspot: true},
+
+      options: {
+        hotspot: true,
+      },
+
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Descripción de la fotografía',
+          type: 'string',
+
+          description:
+            'Describe lo que aparece en la fotografía. Ejemplo: Arreglo Jardín Eterno Clásico con flores artesanales rosadas y recipiente blanco.',
+        }),
+      ],
     }),
+
     defineField({
       name: 'gallery',
-      title: 'Galería de Fotos',
+      title: 'Galería de fotografías',
       type: 'array',
-      of: [{type: 'image'}],
+
+      description: 'Agrega fotografías de diferentes ángulos, acabados y detalles de la pieza.',
+
+      of: [
+        {
+          type: 'image',
+
+          options: {
+            hotspot: true,
+          },
+
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Descripción de la fotografía',
+              type: 'string',
+
+              description: 'Describe el ángulo o detalle específico que aparece.',
+            }),
+          ],
+        },
+      ],
     }),
 
     // --- Storytelling ---
