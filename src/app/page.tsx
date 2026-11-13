@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import type { Metadata } from "next";
+
 import { ArrowUpRight } from "lucide-react";
 
 import { client } from "@/lib/sanity";
@@ -27,6 +29,16 @@ import {
 } from "@/components/home/FeaturedCollection";
 
 import { ExploreMaterials } from "@/components/home/ExploreMaterials";
+
+// ========================================
+// HOME METADATA
+// ========================================
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 // ========================================
 // TYPES

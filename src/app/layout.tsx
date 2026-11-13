@@ -6,6 +6,7 @@ import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Ajusta la ru
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getNavigationCategories } from "@/lib/navigation";
+import { SITE_URL, isPublicDeployment } from "@/lib/site";
 
 const tenor = Tenor_Sans({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stephanymanzano.com"),
+  metadataBase: new URL(SITE_URL),
 
   title: {
     default: "Stephany Manzano | Home Collection",
@@ -71,8 +72,17 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: true,
-    follow: true,
+    index: isPublicDeployment,
+    follow: isPublicDeployment,
+
+    googleBot: {
+      index: isPublicDeployment,
+      follow: isPublicDeployment,
+
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 

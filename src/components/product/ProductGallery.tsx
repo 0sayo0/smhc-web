@@ -66,7 +66,7 @@ export function ProductGallery({ productName, images }: ProductGalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-[4/5] items-center justify-center bg-warm px-8 text-center">
+      <div className="flex aspect-4/5 items-center justify-center bg-warm px-8 text-center">
         <p className="font-editorial text-base italic text-coal/55">
           Fotografía próximamente disponible.
         </p>
@@ -86,7 +86,7 @@ export function ProductGallery({ productName, images }: ProductGalleryProps) {
           MAIN IMAGE
          ===================================== */}
 
-      <div className="relative aspect-[4/5] overflow-hidden bg-warm">
+      <div className="relative aspect-4/5 overflow-hidden bg-warm">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={activeImage.src}
@@ -228,7 +228,7 @@ export function ProductGallery({ productName, images }: ProductGalleryProps) {
           w-[95vw]
 
           max-h-none
-          max-w-[1200px]
+          max-w-300
 
           overflow-hidden
 

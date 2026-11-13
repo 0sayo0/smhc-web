@@ -477,6 +477,8 @@ export function Carousel({
                       transition-[background-color,color,border-color]
                       duration-300
 
+                      smhc-presssmhc-press
+
                       hover:border-coal
                       hover:bg-coal
                       hover:text-cream
